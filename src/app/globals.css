@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Aquila brand tokens — espresso #453D38 and ivory #FAF0D7 are the confirmed Canva colours;
+   the rest are the proposed supporting tones from the brand deck. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-espresso: #453d38;
+  --color-ivory: #faf0d7;
+  --color-paper: #f7f1e6;
+  --color-ink: #241e1a;
+  --color-cocoa: #2d2723;
+  --color-sand: #d8c7b5;
+  --color-taupe: #8c796b;
+  --color-stone: #877466;
+  --font-serif: var(--font-playfair), "Times New Roman", serif;
+  --font-sans: var(--font-jost), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --header-h: 72px;
+}
+
+html {
+  background: var(--color-paper);
+  scroll-behavior: auto;
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-espresso);
+  color: var(--color-ivory);
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-sans text-[10.5px] uppercase tracking-[0.3em];
+  }
+  .display {
+    @apply font-serif font-normal uppercase leading-[1.04] tracking-[0.01em];
+  }
+  .btn-outline {
+    @apply relative inline-flex items-center gap-3 overflow-hidden border border-current px-7 py-[15px] text-[10.5px] uppercase tracking-[0.26em] transition-colors duration-500;
+  }
+  .btn-outline::before {
+    content: "";
+    @apply absolute inset-0 -z-0 origin-left scale-x-0 bg-ivory transition-transform duration-500 ease-out;
+  }
+  .btn-outline:hover::before {
+    @apply scale-x-100;
+  }
+  .btn-outline:hover {
+    @apply text-espresso;
+  }
+  .btn-outline > * {
+    @apply relative z-10;
+  }
+  .btn-solid {
+    @apply relative inline-flex w-full items-center justify-center overflow-hidden bg-espresso px-8 py-[18px] text-[11px] uppercase tracking-[0.32em] text-ivory transition-colors duration-500 hover:bg-ink;
+  }
+  .field {
+    @apply w-full border border-espresso/30 bg-transparent px-[18px] py-[14px] text-[13px] font-light text-ink outline-none transition-colors placeholder:text-taupe focus:border-espresso;
+  }
+  .link-underline {
+    background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px no-repeat;
+    transition: background-size 0.5s ease;
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+}
+
+/* logo rendered from the traced original artwork, so colour follows currentColor */
+.aq-logo {
+  display: block;
+  aspect-ratio: 996 / 297;
+  background: currentColor;
+  -webkit-mask: url(/brand/aquila-logo.svg) center / contain no-repeat;
+  mask: url(/brand/aquila-logo.svg) center / contain no-repeat;
+}
+
+/* subtle matte grain used on espresso surfaces (packaging "textured matte finish") */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
