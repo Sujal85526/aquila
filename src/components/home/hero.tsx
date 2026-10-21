@@ -18,9 +18,9 @@ type Slide = {
 };
 
 const SLIDES: Slide[] = [
-  { id: "see-further", eyebrow: "For those who", lines: ["See further."], align: "left", video: true, src: "/video/hero-poster.jpg", pos: "50% 30%" },
-  { id: "perspective", eyebrow: "For those who see further.", lines: ["A new perspective", "on tomorrow."], muted: 1, align: "left", src: "/photos/DSC00450.jpg", pos: "70% 40%" },
-  { id: "vision", eyebrow: "Aquila — Abu Dhabi", lines: ["Made for the", "light of home."], align: "right", src: "/photos/DSC00361.jpg", pos: "30% 40%" },
+  { id: "see-further", eyebrow: "For those who", lines: ["See further."], align: "left", src: "/photos/DSC00450.jpg", pos: "72% 38%" },
+  { id: "perspective", eyebrow: "For those who see further.", lines: ["A new perspective", "on tomorrow."], muted: 1, align: "right", src: "/photos/DSC00361.jpg", pos: "28% 40%" },
+  { id: "vision", eyebrow: "Aquila — Abu Dhabi", lines: ["Made for the", "light of home."], align: "left", video: true, src: "/video/hero-poster.jpg", pos: "50% 30%" },
 ];
 
 export function Hero() {
@@ -70,7 +70,7 @@ export function Hero() {
         <div key={s.id} data-slide className="absolute inset-0" style={{ opacity: idx === 0 ? 1 : 0 }} aria-hidden={idx !== i}>
           {s.video ? <VideoBackdrop /> : (
             <div data-bg className="absolute inset-0">
-              <Image src={s.src} alt="" fill priority={idx === 1} sizes="100vw" className="object-cover" style={{ objectPosition: s.pos }} />
+              <Image src={s.src} alt="" fill priority={idx === 0} sizes="100vw" className="object-cover" style={{ objectPosition: s.pos }} />
             </div>
           )}
           <div className={`absolute inset-0 ${s.align === "left" ? "bg-gradient-to-r" : "bg-gradient-to-l"} from-ink/70 via-ink/20 to-transparent`} />

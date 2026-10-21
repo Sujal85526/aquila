@@ -2,33 +2,25 @@ import { useId } from "react";
 import type { Product } from "@/lib/products";
 
 /**
- * Stand-in product illustration (front view). Replace with real Aquila product photography —
- * every <Glasses> call site only needs the product's `slug` mapped to an image.
+ * Stand-in product illustration (front view) until real Aquila product photography is supplied.
+ * Frames are drawn as thick strokes around the lens shapes so they read like polished acetate.
  */
-const PATHS = {
+const SHAPES = {
   slim: {
-    left: "M34 46 Q34 38 44 38 L168 40 Q186 41 184 60 L180 74 Q176 88 158 88 L62 88 Q42 88 38 72 Z",
-    right: "M366 46 Q366 38 356 38 L232 40 Q214 41 216 60 L220 74 Q224 88 242 88 L338 88 Q358 88 362 72 Z",
-    bridge: "M184 52 Q200 44 216 52",
-    temple: [20, 44, 34, 46],
+    l: "M46 48 Q46 41 54 41 L166 42 Q180 43 179 58 L175 74 Q172 86 158 86 L68 86 Q52 86 49 72 Z",
+    bar: 8, bridge: 5, temple: 7,
   },
   rect: {
-    left: "M38 42 Q38 32 50 32 L166 34 Q188 36 186 56 L182 82 Q179 98 160 98 L66 98 Q44 98 41 78 Z",
-    right: "M362 42 Q362 32 350 32 L234 34 Q212 36 214 56 L218 82 Q221 98 240 98 L334 98 Q356 98 359 78 Z",
-    bridge: "M186 50 Q200 42 214 50",
-    temple: [20, 40, 38, 42],
+    l: "M46 44 Q46 36 56 36 L166 37 Q182 38 181 55 L177 80 Q174 94 160 94 L68 94 Q52 94 49 78 Z",
+    bar: 12, bridge: 8, temple: 9,
   },
   round: {
-    left: "M40 58 Q40 36 74 36 L158 37 Q190 38 188 62 Q186 94 150 96 L76 96 Q40 94 40 58 Z",
-    right: "M360 58 Q360 36 326 36 L242 37 Q210 38 212 62 Q214 94 250 96 L324 96 Q360 94 360 58 Z",
-    bridge: "M188 52 Q200 44 212 52",
-    temple: [20, 48, 40, 52],
+    l: "M46 60 Q46 38 76 38 L156 39 Q182 40 181 62 Q179 90 152 92 L76 92 Q46 90 46 60 Z",
+    bar: 12, bridge: 9, temple: 9,
   },
   oval: {
-    left: "M36 62 Q36 36 78 36 L152 38 Q192 42 188 66 Q184 94 140 96 L76 96 Q36 94 36 62 Z",
-    right: "M364 62 Q364 36 322 36 L248 38 Q208 42 212 66 Q216 94 260 96 L324 96 Q364 94 364 62 Z",
-    bridge: "M188 54 Q200 48 212 54",
-    temple: [20, 50, 36, 54],
+    l: "M44 62 Q44 38 80 38 L152 40 Q184 44 181 66 Q177 92 140 93 L78 93 Q44 91 44 62 Z",
+    bar: 11, bridge: 8, temple: 8,
   },
 } as const;
 
@@ -40,76 +32,85 @@ export function Glasses({
   className?: string;
 }) {
   const id = useId().replace(/:/g, "");
-  const s = PATHS[product.shape];
-  const inset = product.shape === "slim" ? 4.5 : 6;
+  const s = SHAPES[product.shape];
+  const right = `translate(400 0) scale(-1 1)`;
+  const lensPath = <path d={s.l} />;
   return (
-    <svg
-      viewBox="0 0 400 130"
-      role="img"
-      aria-label={`${product.slug.replace("the-", "The ")} sunglasses`}
-      className={className}
-    >
+    <svg viewBox="0 0 400 130" role="img" aria-label={`${product.slug.replace("the-", "The ")} sunglasses`} className={className}>
       <defs>
         <linearGradient id={`f${id}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={product.frame} />
           <stop offset="1" stopColor={product.frameDark} />
         </linearGradient>
-        <linearGradient id={`l${id}`} x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={`l${id}`} x1="0" y1="0" x2="0.8" y2="1">
           <stop offset="0" stopColor={product.lens} />
           <stop offset="1" stopColor={product.lensDark} />
         </linearGradient>
         <linearGradient id={`g${id}`} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#fff" stopOpacity="0" />
-          <stop offset="0.5" stopColor="#fff" stopOpacity="0.28" />
+          <stop offset="0.5" stopColor="#fff" stopOpacity="0.26" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
         <radialGradient id={`s${id}`}>
-          <stop offset="0" stopColor="#3a2c22" stopOpacity="0.32" />
+          <stop offset="0" stopColor="#3a2c22" stopOpacity="0.3" />
           <stop offset="1" stopColor="#3a2c22" stopOpacity="0" />
         </radialGradient>
+        <clipPath id={`c${id}`}>
+          <path d={s.l} />
+          <path d={s.l} transform={right} />
+        </clipPath>
         {product.tortoise && (
-          <filter id={`t${id}`} x="0" y="0" width="100%" height="100%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.035 0.05" numOctaves="3" seed="7" />
-            <feColorMatrix
-              values="0 0 0 0 0.12  0 0 0 0 0.05  0 0 0 0 0.02  0 0 0 2.4 -0.95"
-              result="spots"
-            />
-            <feComposite in="spots" in2="SourceGraphic" operator="in" />
+          <filter id={`t${id}`} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.05 0.09" numOctaves="3" seed="11" result="n" />
+            <feColorMatrix in="n" values="0 0 0 0 0.09  0 0 0 0 0.03  0 0 0 0 0.01  0 0 0 3.2 -1.35" result="spots" />
+            <feComposite in="spots" in2="SourceAlpha" operator="in" />
           </filter>
         )}
-        <clipPath id={`cl${id}`}>
-          <path d={s.left} />
-          <path d={s.right} />
-        </clipPath>
       </defs>
-      <ellipse cx="200" cy="112" rx="170" ry="9" fill={`url(#s${id})`} />
+
+      <ellipse cx="200" cy="112" rx="165" ry="6" fill={`url(#s${id})`} />
+
+      <g transform="translate(0 -23 ) scale(1 1.35)">
       {/* temples */}
-      <path d={`M${s.temple[2]} ${s.temple[3]} L${s.temple[0]} ${s.temple[1] + 4}`} stroke={product.frameDark} strokeWidth="7" strokeLinecap="round" />
-      <path d={`M${400 - s.temple[2]} ${s.temple[3]} L${400 - s.temple[0]} ${s.temple[1] + 4}`} stroke={product.frameDark} strokeWidth="7" strokeLinecap="round" />
+      <g stroke={product.frameDark} strokeWidth={s.temple} strokeLinecap="round" fill="none">
+        <path d="M48 48 L24 54" />
+        <path d="M352 48 L376 54" />
+      </g>
+
+      {/* lenses */}
+      {[0, 1].map((k) => (
+        <g key={k} transform={k ? right : undefined}>
+          <g fill={`url(#l${id})`}>{lensPath}</g>
+        </g>
+      ))}
+      <g clipPath={`url(#c${id})`}>
+        <rect x="70" y="20" width="40" height="90" fill={`url(#g${id})`} transform="skewX(-20) translate(40 0)" />
+        <rect x="250" y="20" width="40" height="90" fill={`url(#g${id})`} transform="skewX(-20) translate(40 0)" />
+      </g>
+
       {/* frame */}
-      <g fill={`url(#f${id})`}>
-        <path d={s.left} />
-        <path d={s.right} />
-        <path d={s.bridge} stroke={`url(#f${id})`} strokeWidth="9" fill="none" strokeLinecap="round" />
+      <g fill="none" stroke={`url(#f${id})`} strokeLinejoin="round" strokeLinecap="round">
+        {[0, 1].map((k) => (
+          <path key={k} d={s.l} strokeWidth={s.bar} transform={k ? right : undefined} />
+        ))}
+        <path d="M181 50 Q200 42 219 50" strokeWidth={s.bridge} />
       </g>
       {product.tortoise && (
-        <g clipPath={`url(#cl${id})`}>
-          <rect x="0" y="0" width="400" height="130" fill="#000" filter={`url(#t${id})`} opacity="0.85" />
+        <g fill="none" stroke="#000" strokeLinejoin="round" strokeLinecap="round" filter={`url(#t${id})`}>
+          {[0, 1].map((k) => (
+            <path key={k} d={s.l} strokeWidth={s.bar} transform={k ? right : undefined} />
+          ))}
+          <path d="M181 50 Q200 42 219 50" strokeWidth={s.bridge} />
         </g>
       )}
-      {/* lenses */}
-      <g transform={`translate(${inset} ${inset}) scale(${1 - (inset * 2) / 160})`} style={{ transformOrigin: "100px 66px" }}>
-        <path d={s.left} fill={`url(#l${id})`} transform="translate(0 0)" />
+      {/* frame highlight */}
+      <g fill="none" stroke="#fff" strokeOpacity="0.16" strokeWidth="1.4" strokeLinecap="round">
+        <path d="M58 37 L160 38" transform="translate(0 -1)" />
+        <path d="M240 38 L342 37" transform="translate(0 -1)" />
       </g>
-      <g transform={`translate(${-inset} ${inset}) scale(${1 - (inset * 2) / 160})`} style={{ transformOrigin: "300px 66px" }}>
-        <path d={s.right} fill={`url(#l${id})`} />
+      <circle cx="42" cy="53" r="1.3" fill="#d9b787" opacity="0.8" />
+      <circle cx="358" cy="53" r="1.3" fill="#d9b787" opacity="0.8" />
       </g>
-      <g clipPath={`url(#cl${id})`} opacity="0.9">
-        <rect x="46" y="38" width="46" height="70" fill={`url(#g${id})`} transform="skewX(-22) translate(46 0)" />
-        <rect x="246" y="38" width="46" height="70" fill={`url(#g${id})`} transform="skewX(-22) translate(60 0)" />
-      </g>
-      {/* temple mark */}
-      <circle cx={s.temple[2] + 4} cy={s.temple[3] + 2} r="1.4" fill="#d6b27a" opacity="0.85" />
     </svg>
   );
 }

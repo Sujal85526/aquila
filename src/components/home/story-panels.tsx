@@ -24,8 +24,8 @@ const PANELS = [
     title: ["A mindset."],
     cta: "Our values",
     href: "/our-story#values",
-    src: "/photos/packaging-ref.jpg",
-    pos: "50% 50%",
+    src: "/photos/DSC00712.jpg",
+    pos: "60% 40%",
   },
 ];
 

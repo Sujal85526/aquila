@@ -45,7 +45,7 @@ export function Footer() {
       </Reveal>
       <div className="relative border-t border-ivory/15">
         <div className="mx-auto flex max-w-[1480px] flex-col gap-4 px-6 py-6 text-[10px] uppercase tracking-[0.22em] text-sand md:flex-row md:items-center md:justify-between md:px-12">
-          <p>© {new Date().getFullYear()} Aquila · Abu Dhabi</p>
+          <p>© Aquila · Abu Dhabi</p>
           <nav className="flex flex-wrap gap-x-7 gap-y-2" aria-label="Policies">
             <Link href="/policy/shipping" className="link-underline pb-0.5">Shipping &amp; Delivery</Link>
             <Link href="/policy/returns" className="link-underline pb-0.5">Returns &amp; Exchanges</Link>
