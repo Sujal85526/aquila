@@ -74,18 +74,18 @@ export function Hero() {
             </div>
           )}
           <div className={`absolute inset-0 ${s.align === "left" ? "bg-gradient-to-r" : "bg-gradient-to-l"} from-ink/70 via-ink/20 to-transparent`} />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-ink/25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/25 md:from-ink/55" />
 
           <div
-            className={`relative z-10 mx-auto flex h-full max-w-[1480px] items-center px-7 md:px-[clamp(64px,8vw,120px)] ${s.align === "right" ? "justify-end text-right" : ""}`}
+            className={`relative z-10 mx-auto flex h-full max-w-[1480px] items-end pb-24 px-7 md:items-center md:pb-0 md:px-[clamp(64px,8vw,120px)] ${s.align === "right" ? "justify-end text-right" : ""}`}
           >
-            <div className="max-w-[640px] pt-10">
+            <div className="max-w-[640px] md:pt-10">
               {s.eyebrow && (
                 <p data-fade className={`mb-3 text-[12px] uppercase tracking-[0.42em] md:text-[15px] ${s.id === "see-further" ? "" : "text-ivory/85"}`}>
                   {s.eyebrow}
                 </p>
               )}
-              <h1 className="font-serif text-[clamp(44px,7.4vw,88px)] font-normal uppercase leading-[1.02] tracking-[0.015em]">
+              <h1 className="font-serif text-[clamp(36px,7.4vw,88px)] font-normal uppercase leading-[1.02] tracking-[0.015em]">
                 {s.lines.map((l, n) => (
                   <span key={n} className="block overflow-hidden pb-[0.06em]">
                     <span data-line className={`block ${s.muted === n ? "text-ivory/60" : ""}`}>{l}</span>
