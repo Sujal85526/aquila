@@ -33,11 +33,15 @@ export function StoryPanels() {
   const root = useRef<HTMLElement>(null);
   useGSAP(
     () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
-        gsap.fromTo(el, { yPercent: -7 }, { yPercent: 7, ease: "none", scrollTrigger: { trigger: el.parentElement, start: "top bottom", end: "bottom top", scrub: true } });
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
+          gsap.fromTo(el, { yPercent: -5 }, { yPercent: 5, ease: "none", force3D: true, scrollTrigger: { trigger: el.parentElement, start: "top bottom", end: "bottom top", scrub: 0.6 } });
+        });
       });
-      gsap.from("[data-copy]", { y: 40, opacity: 0, duration: 1.1, stagger: 0.15, ease: "power3.out", scrollTrigger: { trigger: root.current, start: "top 75%", once: true } });
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from("[data-copy]", { y: 40, opacity: 0, duration: 1.1, stagger: 0.15, ease: "power3.out", scrollTrigger: { trigger: root.current, start: "top 75%", once: true } });
+      });
     },
     { scope: root },
   );
@@ -45,7 +49,7 @@ export function StoryPanels() {
     <section ref={root} className="grid md:grid-cols-2 md:gap-px md:bg-ivory/30">
       {PANELS.map((p) => (
         <article key={p.title[0]} className="relative isolate flex min-h-[460px] items-end overflow-hidden bg-cocoa text-ivory md:min-h-[clamp(420px,38vw,560px)]">
-          <div className="absolute -inset-y-[9%] inset-x-0 -z-20" data-parallax>
+          <div className="absolute -inset-y-[6%] inset-x-0 -z-20 will-change-transform" data-parallax>
             <Image src={p.src} alt="" fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover" style={{ objectPosition: p.pos }} />
           </div>
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/80 via-ink/25 to-ink/10" />

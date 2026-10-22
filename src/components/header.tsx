@@ -56,7 +56,7 @@ export function Header() {
     overlay && !scrolled && !menu
       ? "bg-gradient-to-b from-black/45 to-transparent"
       : dark || scrolled || menu
-        ? "bg-espresso/95 backdrop-blur-md"
+        ? "bg-espresso"
         : "bg-paper border-b border-ink/70";
 
   return (
@@ -108,7 +108,7 @@ export function Header() {
       </header>
 
       {menu && (
-        <div ref={menuRef} className="fixed inset-0 z-40 flex flex-col justify-center bg-espresso px-8 pt-[var(--header-h)] text-ivory md:hidden grain">
+        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-center bg-espresso px-8 pt-[var(--header-h)] text-ivory md:hidden grain">
           <nav className="flex flex-col gap-7">
             {[{ href: "/", label: "Home" }, ...NAV, { href: "/account", label: "Account" }].map((n) => (
               <Link key={n.href} data-m href={n.href} className="font-serif text-[40px] uppercase leading-none tracking-wide">
@@ -136,7 +136,7 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("keydown", k);
   }, [onClose]);
   return (
-    <div className="fixed inset-0 z-[60] bg-paper/97 px-5 pt-24 backdrop-blur-md md:px-12" role="dialog" aria-label="Search">
+    <div data-lenis-prevent className="fixed inset-0 z-[60] bg-paper px-5 pt-24 md:px-12" role="dialog" aria-label="Search">
       <button aria-label="Close search" onClick={onClose} className="absolute right-5 top-6 p-2 md:right-12">
         <X size={22} strokeWidth={1.2} />
       </button>

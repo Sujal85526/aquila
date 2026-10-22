@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { whenReady } from "@/lib/ready";
 
 type Slide = {
   id: string;
@@ -32,21 +33,27 @@ export function Hero() {
   useEffect(() => {
     const el = root.current;
     if (!el) return;
-    const ctx = gsap.context(() => {
-      const slides = gsap.utils.toArray<HTMLElement>("[data-slide]");
-      slides.forEach((s, idx) => {
-        const active = idx === i;
-        gsap.to(s, { opacity: active ? 1 : 0, duration: first.current ? 0 : 1.2, ease: "power2.inOut", zIndex: active ? 2 : 1 });
-        if (active) {
-          gsap.fromTo(s.querySelectorAll("[data-bg]"), { scale: 1.12 }, { scale: 1, duration: 8, ease: "power1.out" });
-          const lines = s.querySelectorAll("[data-line]");
-          gsap.fromTo(lines, { yPercent: 110 }, { yPercent: 0, duration: 1.25, stagger: 0.12, ease: "power4.out", delay: first.current ? 0.35 : 0.5 });
-          gsap.fromTo(s.querySelectorAll("[data-fade]"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: first.current ? 0.55 : 0.7 });
-        }
-      });
-      first.current = false;
-    }, el);
-    return () => ctx.revert();
+    let ctx: gsap.Context | undefined;
+    const play = () => {
+      ctx = gsap.context(() => {
+        const slides = gsap.utils.toArray<HTMLElement>("[data-slide]");
+        slides.forEach((s, idx) => {
+          const active = idx === i;
+          gsap.to(s, { opacity: active ? 1 : 0, duration: first.current ? 0 : 1.2, ease: "power2.inOut", zIndex: active ? 2 : 1 });
+          if (active) {
+            gsap.fromTo(s.querySelectorAll("[data-bg]"), { scale: 1.1 }, { scale: 1, duration: 9, ease: "power1.out", force3D: true });
+            gsap.fromTo(s.querySelectorAll("[data-line]"), { yPercent: 110 }, { yPercent: 0, duration: 1.25, stagger: 0.12, ease: "power4.out", delay: first.current ? 0.1 : 0.5 });
+            gsap.fromTo(s.querySelectorAll("[data-fade]"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: first.current ? 0.3 : 0.7 });
+          }
+        });
+        first.current = false;
+      }, el);
+    };
+    const off = first.current ? whenReady(play) : (play(), () => {});
+    return () => {
+      off();
+      ctx?.revert();
+    };
   }, [i]);
 
   useEffect(() => {
@@ -67,9 +74,9 @@ export function Hero() {
       onMouseLeave={() => (paused.current = false)}
     >
       {SLIDES.map((s, idx) => (
-        <div key={s.id} data-slide className="absolute inset-0" style={{ opacity: idx === 0 ? 1 : 0 }} aria-hidden={idx !== i}>
+        <div key={s.id} data-slide className="absolute inset-0 will-change-[opacity]" style={{ opacity: idx === 0 ? 1 : 0 }} aria-hidden={idx !== i}>
           {s.video ? <VideoBackdrop /> : (
-            <div data-bg className="absolute inset-0">
+            <div data-bg className="absolute inset-0 will-change-transform">
               <Image src={s.src} alt="" fill priority={idx === 0} sizes="100vw" className="object-cover" style={{ objectPosition: s.pos }} />
             </div>
           )}
@@ -81,18 +88,18 @@ export function Hero() {
           >
             <div className="max-w-[640px] md:pt-10">
               {s.eyebrow && (
-                <p data-fade className={`mb-3 text-[12px] uppercase tracking-[0.42em] md:text-[15px] ${s.id === "see-further" ? "" : "text-ivory/85"}`}>
+                <p data-fade style={{ opacity: 0 }} className={`mb-3 text-[12px] uppercase tracking-[0.42em] md:text-[15px] ${s.id === "see-further" ? "" : "text-ivory/85"}`}>
                   {s.eyebrow}
                 </p>
               )}
               <h1 className="font-serif text-[clamp(36px,7.4vw,88px)] font-normal uppercase leading-[1.02] tracking-[0.015em]">
                 {s.lines.map((l, n) => (
                   <span key={n} className="block overflow-hidden pb-[0.06em]">
-                    <span data-line className={`block ${s.muted === n ? "text-ivory/60" : ""}`}>{l}</span>
+                    <span data-line style={{ transform: "translateY(110%)" }} className={`block will-change-transform ${s.muted === n ? "text-ivory/60" : ""}`}>{l}</span>
                   </span>
                 ))}
               </h1>
-              <div data-fade className="mt-9">
+              <div data-fade style={{ opacity: 0 }} className="mt-9">
                 <Link href="/shop" className="btn-outline">
                   <span>Shop the collection</span>
                   <ArrowRight size={14} strokeWidth={1.2} />
@@ -133,7 +140,7 @@ function VideoBackdrop() {
         <video className="h-full w-full object-cover object-[50%_28%]" src="/video/hero.mp4" poster="/video/hero-poster.jpg" autoPlay muted loop playsInline preload="auto" />
       </div>
       <div className="absolute inset-0 hidden md:block">
-        <Image src="/video/hero-poster.jpg" alt="" fill sizes="100vw" className="scale-125 object-cover opacity-60 blur-2xl" />
+        <Image src="/video/hero-bg-blur.jpg" alt="" fill sizes="100vw" className="object-cover" />
         <div className="absolute inset-y-0 right-[6vw] w-[min(34vw,460px)] xl:right-[9vw]">
           <video data-bg className="h-full w-full object-cover object-[50%_30%]" src="/video/hero.mp4" poster="/video/hero-poster.jpg" autoPlay muted loop playsInline preload="auto" />
           <div className="absolute inset-y-0 -left-px w-24 bg-gradient-to-r from-cocoa/60 to-transparent" />

@@ -61,7 +61,7 @@ export function Glasses({
         </clipPath>
         {product.tortoise && (
           <filter id={`t${id}`} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.05 0.09" numOctaves="3" seed="11" result="n" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.05 0.09" numOctaves="2" seed="11" result="n" />
             <feColorMatrix in="n" values="0 0 0 0 0.09  0 0 0 0 0.03  0 0 0 0 0.01  0 0 0 3.2 -1.35" result="spots" />
             <feComposite in="spots" in2="SourceAlpha" operator="in" />
           </filter>

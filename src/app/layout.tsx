@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
+import { Loader } from "@/components/loader";
 import { SmoothScroll } from "@/components/smooth-scroll";
 
 const playfair = Playfair_Display({
@@ -31,6 +32,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${playfair.variable} ${jost.variable}`}>
       <body className="min-h-dvh">
+        <Loader />
+        <noscript><style>{".aq-loader{display:none!important}"}</style></noscript>
         <SmoothScroll />
         <Header />
         <main>{children}</main>

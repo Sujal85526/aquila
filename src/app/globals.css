@@ -20,6 +20,7 @@
 }
 
 html {
+  scrollbar-gutter: stable;
   background: var(--color-paper);
   scroll-behavior: auto;
 }

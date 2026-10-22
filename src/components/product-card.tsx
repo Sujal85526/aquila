@@ -19,7 +19,7 @@ export function ProductCard({ p, tone = "paper" }: { p: Product; tone?: "paper" 
     <Link href={`/products/${p.slug}`} className="group block text-center" onMouseMove={move} onMouseLeave={leave}>
       <div className={`grid aspect-[16/9] place-items-center px-[6%] [perspective:900px] ${tone === "tile" ? "bg-[#ece3d3]" : ""}`}>
         <div ref={art} className="w-full will-change-transform">
-          <Glasses product={p} className="w-full drop-shadow-[0_14px_14px_rgba(60,40,25,0.16)]" />
+          <Glasses product={p} className="w-full" />
         </div>
       </div>
       <h3 className="eyebrow mt-4 tracking-[0.24em] text-ink">{p.name}</h3>

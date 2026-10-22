@@ -52,7 +52,7 @@ export function Gallery({ product }: { product: Product }) {
           <div ref={stage} className="absolute inset-0">
             {i === 0 ? (
               <div className="grid h-full place-items-center bg-[radial-gradient(ellipse_at_50%_60%,#f3eadb_0%,#dccdb4_100%)] p-[8%]">
-                <Glasses product={product} className="w-full drop-shadow-[0_24px_22px_rgba(60,40,25,0.25)]" />
+                <Glasses product={product} className="w-full" />
               </div>
             ) : (
               <Image src={LIFESTYLE[i - 1].src} alt={LIFESTYLE[i - 1].alt} fill priority sizes="(min-width:768px) 50vw, 100vw" className="object-cover" style={{ objectPosition: LIFESTYLE[i - 1].pos }} />

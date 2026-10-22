@@ -42,6 +42,7 @@ export function CartDrawer() {
       <div ref={veil} onClick={() => setOpen(false)} className="fixed inset-0 z-[70] bg-ink/50 opacity-0" />
       <aside
         ref={panel}
+        data-lenis-prevent
         role="dialog"
         aria-label="Shopping bag"
         className="fixed right-0 top-0 z-[80] flex h-dvh w-full max-w-[440px] translate-x-full flex-col bg-paper text-ink shadow-2xl"
@@ -62,7 +63,7 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            <ul className="flex-1 divide-y divide-ink/10 overflow-y-auto px-6">
+            <ul data-lenis-prevent className="flex-1 divide-y divide-ink/10 overflow-y-auto px-6">
               {items.map(({ p, qty }) => (
                 <li key={p.slug} className="flex gap-5 py-6">
                   <Link href={`/products/${p.slug}`} onClick={() => setOpen(false)} className="grid h-24 w-28 shrink-0 place-items-center bg-[#ece3d3] p-2">

@@ -4,6 +4,7 @@ import { useRef, type ElementType, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { whenReady } from "@/lib/ready";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -25,19 +26,24 @@ export function Reveal({
 }) {
   const ref = useRef<HTMLElement>(null);
   useGSAP(
-    () => {
+    (_, contextSafe) => {
       const el = ref.current;
-      if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (!el || !contextSafe || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const targets = stagger ? Array.from(el.children) : el;
-      gsap.from(targets, {
-        y,
-        opacity: 0,
-        duration: 1.1,
-        delay,
-        ease: "power3.out",
-        stagger: stagger ?? 0,
-        scrollTrigger: { trigger: el, start: "top 88%", once: true },
-      });
+      gsap.set(targets, { y, opacity: 0 });
+      const build = contextSafe(() =>
+        gsap.to(targets, {
+          y: 0,
+          opacity: 1,
+          duration: 1.1,
+          delay,
+          ease: "power3.out",
+          stagger: stagger ?? 0,
+          clearProps: "transform",
+          scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        }),
+      );
+      return whenReady(build);
     },
     { scope: ref },
   );
