@@ -90,12 +90,21 @@ export function Hero() {
         defaults: { ease: "none" },
         scrollTrigger: { trigger: document.documentElement, start: 0, end: () => el.offsetHeight, scrub: true, invalidateOnRefresh: true },
       });
-      tl.to("[data-stage]", { scale: 1.08, force3D: true }, 0)
-        .to("[data-shade]", { opacity: 0.65 }, 0)
+      tl.to("[data-shade]", { opacity: 0.65 }, 0)
         .to("[data-ui]", { opacity: 0 }, 0)
         .to("[data-arrow]", { opacity: 0 }, 0);
     });
     return () => mm.revert();
+  }, []);
+
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      el.querySelectorAll("video").forEach((v) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()));
+    }, { threshold: 0.05 });
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   useEffect(() => {
