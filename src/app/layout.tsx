@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Jost, Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond, Instrument_Sans, Jost, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -22,6 +22,12 @@ const cormorant = Cormorant_Garamond({
   weight: ["300", "400"],
 });
 
+const instrument = Instrument_Sans({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
 const jost = Jost({
   variable: "--font-jost",
   subsets: ["latin"],
@@ -39,7 +45,7 @@ export const viewport: Viewport = { themeColor: "#453d38" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${playfair.variable} ${jost.variable} ${cormorant.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${jost.variable} ${cormorant.variable} ${instrument.variable}`}>
       <body className="min-h-dvh">
         <Loader />
         <noscript><style>{".aq-loader{display:none!important}"}</style></noscript>

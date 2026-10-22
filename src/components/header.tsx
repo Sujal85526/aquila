@@ -131,10 +131,10 @@ export function Header() {
       </header>
 
       {menu && (
-        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-center bg-espresso px-8 pt-[var(--header-h)] text-ivory md:hidden grain">
+        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-start bg-espresso px-8 pt-[calc(var(--header-h)+16px)] text-ivory md:hidden grain">
           <video
             data-m
-            className="mb-8 h-[22vh] max-h-[210px] aspect-[9/16] bg-cocoa object-cover"
+            className="mb-7 h-[28vh] max-h-[260px] w-auto self-start aspect-[9/16] bg-cocoa object-contain"
             src="/video/menu-teaser.mp4"
             poster="/video/menu-teaser-poster.jpg"
             autoPlay
@@ -146,7 +146,7 @@ export function Header() {
           />
           <nav className="flex flex-col gap-5">
             {[...NAV, { href: "/policy", label: "Policy" }, { href: "/account", label: "Account" }].map((n) => (
-              <Link key={n.href} data-m href={n.href} className="font-serif text-[26px] uppercase leading-none tracking-wide">
+              <Link key={n.href} data-m href={n.href} className="font-[family-name:var(--font-instrument)] text-[28px] uppercase leading-none tracking-[-0.01em]">
                 {n.label}
               </Link>
             ))}
