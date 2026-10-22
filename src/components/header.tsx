@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { AccountIcon, BagIcon, InstagramIcon, SearchIcon } from "./icons";
 import { Logo } from "./logo";
 import { useCart } from "@/lib/cart";
@@ -101,7 +101,9 @@ export function Header() {
             aria-label={menu ? "Close menu" : "Open menu"}
             onClick={() => setMenu((m) => !m)}
           >
-            {menu ? <X size={22} strokeWidth={1.2} /> : <Menu size={22} strokeWidth={1.2} />}
+            {menu ? <X size={22} strokeWidth={1.2} /> : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden>
+                <path d="M3 8.5h18M3 15.5h18" />
+              </svg>}
           </button>
 
           <Link href="/" aria-label="AQUILA home" className="justify-self-center">
