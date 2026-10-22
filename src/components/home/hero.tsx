@@ -24,7 +24,9 @@ type Slide = {
 };
 
 const FURTHER = { eyebrow: "For those who", lines: ["See further."], size: "md:text-[clamp(48px,6.1vw,104px)]" };
-const DURATION = 7.5;
+// how long each slide stays: photos move along quickly, the film gets most of its 9 seconds
+const photoSeconds = 4.5;
+const filmSeconds = 8;
 
 const SLIDES: Slide[] = [
   { id: "see-further", ...FURTHER, side: "md:pl-[15vw]", src: "/photos/DSC00450.jpg", pos: "72% 38%", mobilePos: "72% 38%" },
@@ -130,7 +132,7 @@ export function Hero() {
         progress.current?.kill();
         const fills = gsap.utils.toArray<HTMLElement>("[data-fill]", el);
         fills.forEach((f, n) => gsap.set(f, { scaleX: n === idx ? 0 : 0 }));
-        progress.current = gsap.to(fills[idx], { scaleX: 1, duration: DURATION, ease: "none", onComplete: () => !paused.current && go(idx + 1) });
+        progress.current = gsap.to(fills[idx], { scaleX: 1, duration: SLIDES[idx].video ? filmSeconds : photoSeconds, ease: "none", onComplete: () => !paused.current && go(idx + 1) });
         if (paused.current) progress.current.pause();
       };
 
