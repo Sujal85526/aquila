@@ -7,12 +7,12 @@ import { CONTACT } from "@/lib/products";
 import { ArrowRight } from "lucide-react";
 import { Magnetic, Reveal, SplitHeading } from "../motion";
 
-const FEED = [
+const FEED: { src: string; href: string; pos: string; video?: string }[] = [
   { src: "/instagram/post-1.jpg", href: "https://www.instagram.com/p/DVJbVolko84/", pos: "50% 60%" },
   { src: "/instagram/post-2.jpg", href: "https://www.instagram.com/p/DVdPdMNEjDl/", pos: "50% 50%" },
-  { src: "/instagram/reel-3.jpg", href: "https://www.instagram.com/reel/DVENcHjkg51/", pos: "50% 45%" },
+  { src: "/instagram/reel-3.jpg", video: "/instagram/reel-3.mp4", href: "https://www.instagram.com/reel/DVENcHjkg51/", pos: "50% 45%" },
   { src: "/instagram/post-4.jpg", href: "https://www.instagram.com/p/DVEITfHEsHL/", pos: "50% 50%" },
-  { src: "/instagram/reel-5.jpg", href: "https://www.instagram.com/reel/DVBr3VHkiiW/", pos: "50% 40%" },
+  { src: "/instagram/reel-5.jpg", video: "/instagram/reel-5.mp4", href: "https://www.instagram.com/reel/DVBr3VHkiiW/", pos: "50% 40%" },
 ];
 
 const N = FEED.length;
@@ -118,7 +118,14 @@ function Carousel() {
 
     layout();
     paint();
-    const io = new IntersectionObserver(([en]) => (visible = en.isIntersecting), { rootMargin: "100px" });
+    const videos = Array.from(stageEl.querySelectorAll("video"));
+    const io = new IntersectionObserver(
+      ([en]) => {
+        visible = en.isIntersecting;
+        videos.forEach((v) => (visible && !reduced ? v.play().catch(() => {}) : v.pause()));
+      },
+      { rootMargin: "100px" },
+    );
     io.observe(stageEl);
     const ro = new ResizeObserver(() => {
       layout();
@@ -164,7 +171,21 @@ function Carousel() {
           className="absolute left-1/2 top-1/2 block overflow-hidden rounded-[26px] bg-cocoa shadow-[0_24px_40px_-24px_rgba(0,0,0,0.4)]"
           style={{ width: "var(--w)", height: "var(--h)" }}
         >
-          <Image src={f.src} alt="" fill sizes="320px" draggable={false} className="pointer-events-none object-cover" style={{ objectPosition: f.pos }} />
+          {f.video ? (
+            <video
+              src={f.video}
+              poster={f.src}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: f.pos }}
+            />
+          ) : (
+            <Image src={f.src} alt="" fill sizes="320px" draggable={false} className="pointer-events-none object-cover" style={{ objectPosition: f.pos }} />
+          )}
         </a>
       ))}
     </div>
@@ -184,7 +205,7 @@ export function InstagramStrip() {
       </Reveal>
       <Reveal className="mt-4 flex justify-center md:mt-8">
         <Magnetic>
-          <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn-outline on-light text-ink" data-cursor="Follow">
+          <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn-outline drift" data-cursor="Follow">
             <span>Follow us</span>
             <ArrowRight size={13} strokeWidth={1.2} />
           </a>

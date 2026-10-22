@@ -71,6 +71,20 @@ body {
   .btn-outline.on-light:hover {
     @apply text-ivory;
   }
+  /* Follow button: a slow drift through the brand's earth tones. */
+  .btn-outline.drift {
+    background: linear-gradient(115deg, #453d38, #7a6455, #b08a5a, #8c796b, #453d38);
+    background-size: 300% 300%;
+    animation: aq-drift 9s ease-in-out infinite;
+    border-color: transparent;
+    color: var(--color-ivory);
+  }
+  .btn-outline.drift::before {
+    display: none;
+  }
+  .btn-outline.drift:hover {
+    @apply text-ivory;
+  }
   .btn-outline > * {
     @apply relative z-10;
   }
@@ -137,3 +151,9 @@ html.aq-eagle-cursor select {
   cursor: text !important;
 }
 
+
+@keyframes aq-drift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) { .btn-outline.drift { animation: none; } }
