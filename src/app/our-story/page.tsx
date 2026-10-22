@@ -54,10 +54,8 @@ export default function OurStory() {
               </div>
             ))}
           </Reveal>
-          <ClipReveal className="relative mt-16 aspect-[4/3] overflow-hidden md:aspect-[16/7]">
-            <div className="absolute inset-0">
-              <Image src="/photos/packaging-ref.jpg" alt="Aquila packaging: deep espresso box, bag and microfibre pouch" fill sizes="(min-width:1480px) 1380px, 100vw" className="object-cover object-[50%_45%]" />
-            </div>
+          <ClipReveal cover="bg-espresso" className="mt-16 aspect-[4/3] md:aspect-[16/7]">
+            <Image src="/photos/packaging-ref.jpg" alt="Aquila packaging: deep espresso box, bag and microfibre pouch" fill sizes="(min-width:1480px) 1380px, 100vw" className="object-cover object-[50%_45%]" />
           </ClipReveal>
         </div>
       </section>

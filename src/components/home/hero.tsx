@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { gsap, SplitText, ScrollTrigger, useGSAP, hasFinePointer, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, SplitText, ScrollTrigger, useGSAP, prefersReducedMotion } from "@/lib/gsap";
 import { whenReady } from "@/lib/ready";
 import { Magnetic } from "../motion";
 
@@ -61,6 +61,29 @@ export function Hero() {
       setI(v);
     }
   }, []);
+
+  // Only the visible film decodes: pause it when its slide is off screen or the hero has scrolled away.
+  const inView = useRef(true);
+  const syncVideo = () => {
+    const el = root.current;
+    if (!el) return;
+    const slides = el.querySelectorAll<HTMLElement>("[data-slide]");
+    const v = slides[SLIDES.findIndex((s) => s.video)]?.querySelector("video");
+    if (!v) return;
+    if (inView.current && cur.current === SLIDES.findIndex((s) => s.video)) v.play().catch(() => {});
+    else v.pause();
+  };
+  useGSAP(
+    () => {
+      const io = new IntersectionObserver(([e]) => {
+        inView.current = e.isIntersecting;
+        syncVideo();
+      }, { threshold: 0.05 });
+      io.observe(root.current!);
+      return () => io.disconnect();
+    },
+    { scope: root },
+  );
 
   const go = (n: number) => setI((n + SLIDES.length) % SLIDES.length);
 
@@ -119,12 +142,12 @@ export function Hero() {
           const s = slides[i];
           const tl = gsap.timeline();
           if (!reduce) {
-            tl.fromTo(el.querySelector("[data-stage]"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 1.5, ease: "expo.inOut", clearProps: "clipPath" }, 0)
-              .fromTo(s.querySelectorAll("[data-bg]"), { scale: 1.25 }, { scale: 1, duration: 2.4, ease: "expo.out", clearProps: "transform" }, 0.05);
+            tl.fromTo(s, { xPercent: -100 }, { xPercent: 0, duration: 1.5, ease: "expo.inOut" }, 0)
+              .fromTo(s.querySelector("[data-inner]"), { xPercent: 100 }, { xPercent: 0, duration: 1.5, ease: "expo.inOut" }, 0);
           }
           textIn(s, reduce ? 0 : 0.75, tl);
           tl.to(el.querySelectorAll("[data-ui]"), { autoAlpha: 1, duration: 0.8 }, reduce ? 0 : 1.2);
-          tl.add(() => startProgress(i), reduce ? 0 : 1.2);
+          tl.add(() => { startProgress(i); syncVideo(); }, reduce ? 0 : 1.2);
         };
         const off = whenReady(play);
         return () => off();
@@ -138,22 +161,24 @@ export function Hero() {
       const tl = gsap.timeline({
         onComplete: () => {
           gsap.set(prev, { autoAlpha: 0, zIndex: 1 });
-          gsap.set(prev.querySelectorAll("[data-bg]"), { x: 0 });
-          gsap.set(next, { zIndex: 2, clearProps: "clipPath" });
+          gsap.set(prev.querySelector("[data-inner]"), { xPercent: 0 });
+          gsap.set(next, { zIndex: 2 });
+          syncVideo();
           busy.current = null;
         },
       });
       busy.current = tl;
       cur.current = i;
       progress.current?.kill();
-      gsap.set(next, { autoAlpha: 1, zIndex: 3, clipPath: reduce ? "none" : "inset(0 0 0 100%)" });
+      gsap.set(next, { autoAlpha: 1, zIndex: 3, xPercent: reduce ? 0 : 100 });
+      gsap.set(next.querySelector("[data-inner]"), { xPercent: reduce ? 0 : -100 });
       gsap.set(prev, { zIndex: 2 });
       textOut(prev, tl);
       if (!reduce) {
-        tl.to(next, { clipPath: "inset(0 0 0 0%)", duration: 1.3, ease: "expo.inOut" }, 0.1)
-          .fromTo(next.querySelectorAll("[data-bg]"), { scale: 1.3 }, { scale: 1, duration: 2, ease: "expo.out" }, 0.1)
-          .to(prev.querySelectorAll("[data-bg]"), { x: "-7%", duration: 1.3, ease: "expo.inOut" }, 0.1);
-      } else tl.set({}, {}, 0.1);
+        tl.to(next, { xPercent: 0, duration: 1.3, ease: "expo.inOut" }, 0.1)
+          .to(next.querySelector("[data-inner]"), { xPercent: 0, duration: 1.3, ease: "expo.inOut" }, 0.1)
+          .to(prev.querySelector("[data-inner]"), { xPercent: -22, duration: 1.3, ease: "expo.inOut" }, 0.1);
+      }
       textIn(next, 0.7, tl);
       tl.add(() => startProgress(i), 0.9);
     },
@@ -172,26 +197,10 @@ export function Hero() {
             defaults: { ease: "none" },
             scrollTrigger: { trigger: document.documentElement, start: 0, end: () => el.offsetHeight, scrub: true, invalidateOnRefresh: true },
           })
-          .to("[data-stage]", { scale: 1.08, force3D: true }, 0)
           .to("[data-shade]", { opacity: 0.7 }, 0)
           .to("[data-ui]", { opacity: 0 }, 0)
           .to("[data-arrow]", { opacity: 0 }, 0);
       });
-      if (hasFinePointer()) {
-        const bgs = gsap.utils.toArray<HTMLElement>("[data-bg]", el);
-        const move = (e: PointerEvent) => {
-          const r = el.getBoundingClientRect();
-          const nx = (e.clientX - r.left) / r.width - 0.5;
-          const ny = (e.clientY - r.top) / r.height - 0.5;
-          gsap.to(bgs, { xPercent: nx * -2.2, yPercent: ny * -2.2, duration: 1.2, ease: "power3.out", overwrite: "auto" });
-          gsap.to("[data-headline]", { x: nx * 14, y: ny * 8, duration: 1.2, ease: "power3.out", overwrite: "auto" });
-        };
-        el.addEventListener("pointermove", move);
-        return () => {
-          el.removeEventListener("pointermove", move);
-          mm.revert();
-        };
-      }
       return () => mm.revert();
     },
     { scope: root },
@@ -217,22 +226,23 @@ export function Hero() {
           <div
             key={s.id}
             data-slide
-            className={`absolute inset-0 will-change-[opacity,clip-path] ${s.video ? "opacity-0 max-md:opacity-100" : idx === 0 ? "opacity-100 max-md:opacity-0" : "opacity-0"}`}
+            className={`absolute inset-0 overflow-hidden ${s.video ? "opacity-0 max-md:opacity-100" : idx === 0 ? "opacity-100 max-md:opacity-0" : "opacity-0"}`}
             aria-hidden={idx !== i}
           >
+            <div data-inner className="absolute inset-0 will-change-transform">
             {s.video ? (
-              <div data-bg className="absolute -inset-[3%] will-change-transform">
-                <video className="h-full w-full object-cover object-[50%_35%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="auto" />
+              <div data-bg className="absolute inset-0">
+                <video className="h-full w-full object-cover object-[50%_35%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" muted loop playsInline preload="metadata" />
               </div>
             ) : (
-              <div data-bg className="absolute -inset-[3%] will-change-transform">
+              <div data-bg className="absolute inset-0">
                 <Image
                   src={s.src}
                   alt=""
                   fill
                   priority={idx === 0}
                   quality={90}
-                  sizes="106vw"
+                  sizes="100vw"
                   className="object-cover md:![object-position:var(--pos)]"
                   style={{ objectPosition: s.mobilePos, ["--pos" as string]: s.pos }}
                 />
@@ -262,6 +272,7 @@ export function Hero() {
                   </Magnetic>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         ))}

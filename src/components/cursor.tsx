@@ -15,6 +15,7 @@ export function Cursor() {
     () => {
       if (!hasFinePointer() || prefersReducedMotion()) return;
       const el = ring.current!;
+      const dot = () => el.querySelector("[data-dot]")!;
       gsap.set(el, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
       const x = gsap.quickTo(el, "x", { duration: 0.45, ease: "power3" });
       const y = gsap.quickTo(el, "y", { duration: 0.45, ease: "power3" });
@@ -33,13 +34,13 @@ export function Cursor() {
         const interactive = t.closest("a,button,input,select,label,[role=button]");
         if (tagged) {
           label.current!.textContent = tagged.dataset.cursor ?? "";
-          gsap.to(el, { width: 84, height: 84, backgroundColor: "rgba(250,240,215,0.92)", borderColor: "transparent", duration: 0.45, ease: "expo.out" });
+          gsap.to(dot(), { scale: 1, backgroundColor: "rgba(250,240,215,0.94)", borderColor: "transparent", duration: 0.45, ease: "expo.out" });
           gsap.to(label.current, { autoAlpha: 1, duration: 0.3 });
         } else if (interactive) {
-          gsap.to(el, { width: 46, height: 46, backgroundColor: "rgba(250,240,215,0)", borderColor: "rgba(250,240,215,0.9)", duration: 0.4, ease: "expo.out" });
+          gsap.to(dot(), { scale: 0.55, backgroundColor: "rgba(250,240,215,0)", borderColor: "rgba(250,240,215,0.9)", duration: 0.4, ease: "expo.out" });
           gsap.to(label.current, { autoAlpha: 0, duration: 0.2 });
         } else {
-          gsap.to(el, { width: 14, height: 14, backgroundColor: "rgba(250,240,215,0)", borderColor: "rgba(250,240,215,0.9)", duration: 0.4, ease: "expo.out" });
+          gsap.to(dot(), { scale: 0.1667, backgroundColor: "rgba(250,240,215,0)", borderColor: "rgba(250,240,215,0.9)", duration: 0.4, ease: "expo.out" });
           gsap.to(label.current, { autoAlpha: 0, duration: 0.2 });
         }
       };
@@ -60,12 +61,9 @@ export function Cursor() {
   );
 
   return (
-    <div
-      ref={ring}
-      aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[120] hidden size-[14px] place-items-center rounded-full border border-ivory/90 shadow-[0_0_0_1px_rgba(36,30,26,0.28)] md:grid [@media(hover:none)]:hidden"
-    >
-      <span ref={label} className="text-[9px] font-medium uppercase tracking-[0.2em] text-espresso opacity-0" />
+    <div ref={ring} aria-hidden className="pointer-events-none fixed left-0 top-0 z-[120] hidden size-[84px] place-items-center md:grid [@media(hover:none)]:hidden">
+      <div data-dot className="absolute size-[84px] scale-[0.1667] rounded-full border border-ivory/90 shadow-[0_0_0_1px_rgba(36,30,26,0.28)]" />
+      <span ref={label} className="relative text-[9px] font-medium uppercase tracking-[0.2em] text-espresso opacity-0" />
     </div>
   );
 }

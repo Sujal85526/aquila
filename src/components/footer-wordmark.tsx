@@ -18,12 +18,9 @@ export function FooterWordmark() {
       const off = whenReady(() => {
         stop = onceVisible(el, () => gsap.to(mark, { yPercent: 0, duration: 1.8, ease: "expo.out" }), "0px 0px -4% 0px");
       });
-      const t = gsap.fromTo(mark, { scale: 0.94 }, { scale: 1, ease: "none", transformOrigin: "50% 100%", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom bottom", scrub: true } });
       return () => {
         off();
         stop();
-        t.scrollTrigger?.kill();
-        t.kill();
       };
     },
     { scope: root },

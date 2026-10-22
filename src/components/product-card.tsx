@@ -3,24 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { gsap, useGSAP, hasFinePointer, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, hasFinePointer } from "@/lib/gsap";
 import { aed, type Product } from "@/lib/products";
 import { Scramble } from "./motion";
 
 /** `paper`: transparent render on the page (home). `tile`: render on its own light tile (product page, shop). */
 export function ProductCard({ p, tone = "paper" }: { p: Product; tone?: "paper" | "tile" }) {
-  const root = useRef<HTMLAnchorElement>(null);
-  const float = useRef<HTMLDivElement>(null);
   const art = useRef<HTMLDivElement>(null);
-
-  // idle float, offset per card so the row never moves in unison
-  useGSAP(
-    () => {
-      if (prefersReducedMotion()) return;
-      gsap.to(float.current, { y: -5, duration: 2.4 + Math.random() * 1.2, ease: "sine.inOut", yoyo: true, repeat: -1, delay: Math.random() * 1.5 });
-    },
-    { scope: root },
-  );
 
   const move = (e: React.MouseEvent) => {
     if (!hasFinePointer()) return;
@@ -32,12 +21,10 @@ export function ProductCard({ p, tone = "paper" }: { p: Product; tone?: "paper" 
   const leave = () => gsap.to(art.current, { rotateY: 0, rotateX: 0, scale: 1, duration: 0.9, ease: "elastic.out(1,0.6)", overwrite: "auto" });
 
   return (
-    <Link ref={root} href={`/products/${p.slug}`} data-cursor="View" className="group block text-center" onMouseMove={move} onMouseLeave={leave}>
+    <Link href={`/products/${p.slug}`} data-cursor="View" className="group block text-center" onMouseMove={move} onMouseLeave={leave}>
       <div className="[perspective:900px]">
-        <div ref={float} className="will-change-transform">
-          <div ref={art} className="will-change-transform">
-            <Image src={tone === "tile" ? p.tile : p.img} alt={`${p.name} sunglasses`} width={1176} height={408} sizes="(min-width:768px) 25vw, 50vw" className="h-auto w-full" />
-          </div>
+        <div ref={art}>
+          <Image src={tone === "tile" ? p.tile : p.img} alt={`${p.name} sunglasses`} width={1176} height={408} sizes="(min-width:768px) 25vw, 50vw" className="h-auto w-full" />
         </div>
       </div>
       <h3 className="eyebrow mt-2 text-[10px] font-normal tracking-[0.22em] text-ink md:text-[10.5px]">

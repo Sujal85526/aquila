@@ -35,7 +35,8 @@ export function Loader() {
 
       const intro = gsap.timeline();
       intro
-        .to(q("[data-fill]"), { clipPath: "inset(0% 0 0 0)", duration: 1.7, ease: "power2.inOut" }, 0.2)
+        .fromTo(q("[data-fill]"), { y: 0, yPercent: 100 }, { yPercent: 0, duration: 1.7, ease: "power2.inOut" }, 0.2)
+        .fromTo(q("[data-fill-inner]"), { y: 0, yPercent: -100 }, { yPercent: 0, duration: 1.7, ease: "power2.inOut" }, 0.2)
         .to(q("[data-line]"), { scaleX: 1, duration: 1.7, ease: "power2.inOut" }, 0.2)
         .to(q("[data-tag]"), { autoAlpha: 1, duration: 0.3 }, 0.5)
         .to(q("[data-tag]"), { duration: 1.4, scrambleText: { text: "For those who see further", chars: "upperCase", speed: 0.6, revealDelay: 0.2 } }, 0.5)
@@ -55,10 +56,14 @@ export function Loader() {
   );
 
   return (
-    <div ref={root} className="aq-loader grain fixed inset-0 z-[100] flex flex-col items-center justify-center bg-espresso text-ivory" role="status" aria-label="Loading AQUILA">
+    <div ref={root} className="aq-loader fixed inset-0 z-[100] flex flex-col items-center justify-center bg-espresso text-ivory" role="status" aria-label="Loading AQUILA">
       <div data-mark className="relative w-[min(58vw,380px)]">
         <span aria-hidden className="aq-logo w-full opacity-[0.14]" />
-        <span data-fill aria-hidden className="aq-logo absolute inset-0 w-full" style={{ clipPath: "inset(100% 0 0 0)" }} />
+        <div data-fill aria-hidden className="absolute inset-0 overflow-hidden" style={{ transform: "translateY(100%)" }}>
+          <div data-fill-inner className="absolute inset-0" style={{ transform: "translateY(-100%)" }}>
+            <span className="aq-logo w-full" />
+          </div>
+        </div>
       </div>
       <p data-meta data-tag className="absolute inset-x-0 bottom-10 text-center text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]">
         For those who see further

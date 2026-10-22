@@ -30,8 +30,7 @@ export function StoryPanels() {
           const title = p.querySelector<HTMLElement>("[data-title]")!;
           const split = SplitText.create(title, { type: "lines", mask: "lines", linesClass: "pb-[0.08em]" });
           splits.push(split);
-          gsap.set(p, { clipPath: "inset(0 0 100% 0)" });
-          gsap.set(p.querySelector("[data-img]"), { scale: 1.35 });
+          gsap.set(p.querySelector("[data-img]"), { scale: 1.25 });
           gsap.set(split.lines, { yPercent: 110 });
           gsap.set(p.querySelectorAll("[data-rise]"), { autoAlpha: 0, y: 18 });
           ScrollTrigger.create({
@@ -41,8 +40,9 @@ export function StoryPanels() {
             onEnter: () => {
               gsap
                 .timeline({ delay: n * 0.12 })
-                .to(p, { clipPath: "inset(0 0 0% 0)", duration: 1.5, ease: "expo.inOut", clearProps: "clipPath" })
-                .to(p.querySelector("[data-img]"), { scale: 1, duration: 2.2, ease: "expo.out", clearProps: "transform" }, 0)
+                .to(p.querySelector("[data-cover]"), { scaleY: 0, duration: 1.4, ease: "expo.inOut" })
+                .to(p.querySelector("[data-img]"), { scale: 1, duration: 2, ease: "expo.out", clearProps: "transform" }, 0)
+                .set(p.querySelector("[data-cover]"), { display: "none" })
                 .to(split.lines, { yPercent: 0, duration: 1.2, stagger: 0.09, ease: "expo.out" }, 0.7)
                 .to(p.querySelectorAll("[data-rise]"), { autoAlpha: 1, y: 0, duration: 1, stagger: 0.1 }, 0.9);
             },
@@ -66,7 +66,8 @@ export function StoryPanels() {
     <section ref={root} className="grid gap-px bg-ivory/40 md:grid-cols-2">
       {PANELS.map((p) => (
         <article key={p.title[0]} data-panel className="group relative isolate flex min-h-[400px] items-end overflow-hidden bg-cocoa text-ivory md:aspect-[2.19/1] md:min-h-0">
-          <div data-parallax className="absolute -inset-y-[4%] inset-x-0 -z-20 will-change-transform">
+          <span data-cover aria-hidden className="absolute inset-0 z-30 origin-bottom bg-paper" />
+          <div data-parallax className="absolute -inset-y-[4%] inset-x-0 -z-20">
             <div data-img className="absolute inset-0 transition-transform duration-[1800ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.04]">
               <Image src={p.src} alt="" fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover" />
             </div>

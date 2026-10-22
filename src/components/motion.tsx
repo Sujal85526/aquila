@@ -171,22 +171,24 @@ export function Magnetic({ children, className, strength = 0.28 }: { children: R
   );
 }
 
-/** Image (or any block) that opens like a shutter as it scrolls into view, with the content easing out of a zoom. */
-export function ClipReveal({ children, className, delay = 0, from = "bottom" }: { children: ReactNode; className?: string; delay?: number; from?: "bottom" | "left" | "right" }) {
+/** Block that opens like a shutter as it scrolls into view (a cover slides away; only transforms animate). */
+export function ClipReveal({ children, className, delay = 0, from = "bottom", cover = "bg-paper" }: { children: ReactNode; className?: string; delay?: number; from?: "bottom" | "left" | "right"; cover?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
       const el = ref.current!;
-      const inner = el.firstElementChild as HTMLElement | null;
-      const start = from === "left" ? "inset(0 100% 0 0)" : from === "right" ? "inset(0 0 0 100%)" : "inset(100% 0 0 0)";
-      gsap.set(el, { clipPath: start });
-      if (inner) gsap.set(inner, { scale: 1.3 });
+      const shade = el.querySelector("[data-cover]")!;
+      const inner = el.querySelector("[data-content]");
+      const axis = from === "bottom" ? { scaleY: 0 } : { scaleX: 0 };
+      const origin = from === "left" ? "100% 50%" : from === "right" ? "0% 50%" : "50% 100%";
+      gsap.set(shade, { transformOrigin: origin });
+      if (inner) gsap.set(inner, { scale: 1.2 });
       let stop = () => {};
       const off = whenReady(() => {
         stop = onceVisible(el, () => {
-          gsap.to(el, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.5, delay, ease: "expo.inOut", clearProps: "clipPath" });
-          if (inner) gsap.to(inner, { scale: 1, duration: 2.2, delay, ease: "expo.out", clearProps: "transform" });
+          gsap.to(shade, { ...axis, duration: 1.4, delay, ease: "expo.inOut" });
+          if (inner) gsap.to(inner, { scale: 1, duration: 2, delay, ease: "expo.out", clearProps: "transform" });
         });
       });
       return () => {
@@ -197,8 +199,11 @@ export function ClipReveal({ children, className, delay = 0, from = "bottom" }: 
     { scope: ref },
   );
   return (
-    <div ref={ref} className={className}>
-      {children}
+    <div ref={ref} className={`relative overflow-hidden ${className ?? ""}`}>
+      <div data-content className="absolute inset-0">
+        {children}
+      </div>
+      <span data-cover aria-hidden className={`absolute inset-0 z-10 ${cover}`} />
     </div>
   );
 }

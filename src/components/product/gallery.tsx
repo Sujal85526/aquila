@@ -48,7 +48,8 @@ export function Gallery({ product }: { product: Product }) {
   const go = (n: number) => {
     const t = (n + shots.length) % shots.length;
     if (!prefersReducedMotion()) {
-      gsap.fromTo(stage.current, { clipPath: "inset(0 0 0 100%)", scale: 1.12 }, { clipPath: "inset(0 0 0 0%)", scale: 1, duration: 1.1, ease: "expo.inOut", clearProps: "clipPath" });
+      gsap.fromTo(stage.current, { xPercent: 100 }, { xPercent: 0, duration: 1.1, ease: "expo.inOut" });
+      gsap.fromTo(stage.current!.firstElementChild, { xPercent: -100 }, { xPercent: 0, duration: 1.1, ease: "expo.inOut" });
     }
     setI(t);
   };
@@ -60,12 +61,14 @@ export function Gallery({ product }: { product: Product }) {
     () => {
       if (prefersReducedMotion()) return;
       const el = root.current!;
-      gsap.set(stage.current, { clipPath: "inset(100% 0 0 0)", scale: 1.25 });
+      gsap.set(stage.current, { yPercent: 100 });
+      gsap.set(stage.current!.firstElementChild, { yPercent: -100 });
       gsap.set(el.querySelectorAll("[data-thumb]"), { autoAlpha: 0, x: -24 });
       const off = whenReady(() => {
         gsap
           .timeline()
-          .to(stage.current, { clipPath: "inset(0% 0 0 0)", scale: 1, duration: 1.6, ease: "expo.inOut", clearProps: "clipPath" })
+          .to(stage.current, { yPercent: 0, duration: 1.5, ease: "expo.inOut" })
+          .to(stage.current!.firstElementChild, { yPercent: 0, duration: 1.5, ease: "expo.inOut" }, 0)
           .to(el.querySelectorAll("[data-thumb]"), { autoAlpha: 1, x: 0, duration: 0.9, stagger: 0.07, ease: "expo.out" }, 0.5);
       });
       return () => off();
@@ -92,18 +95,18 @@ export function Gallery({ product }: { product: Product }) {
 
       <div className="order-1 md:order-2">
         <div className="relative aspect-[631/460] overflow-hidden bg-[#ede8e2]">
-          <div ref={stage} data-stage-img className="absolute inset-0 will-change-transform">
-            <Image src={cur.src} alt={cur.alt} fill priority sizes="(min-width:768px) 50vw, 100vw" className={cur.fit === "contain" ? "object-contain p-[6%]" : "object-cover"} />
+          <div ref={stage} data-stage-img className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0">
+              <Image src={cur.src} alt={cur.alt} fill priority sizes="(min-width:768px) 50vw, 100vw" className={cur.fit === "contain" ? "object-contain p-[6%]" : "object-cover"} />
+            </div>
           </div>
           <button aria-label="Previous image" onClick={() => go(i - 1)} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-ivory drop-shadow transition hover:scale-110"><ChevronLeft size={26} strokeWidth={1.1} /></button>
           <button aria-label="Next image" onClick={() => go(i + 1)} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-ivory drop-shadow transition hover:scale-110"><ChevronRight size={26} strokeWidth={1.1} /></button>
         </div>
         <div className="mt-2.5 hidden grid-cols-2 gap-2.5 md:grid">
           {details.map((src, n) => (
-            <ClipReveal key={src} delay={n * 0.15} from={n ? "right" : "left"} className="relative aspect-[310/237] overflow-hidden">
-              <div className="absolute inset-0 transition-transform duration-[1400ms] hover:scale-105">
-                <Image src={src} alt="" fill sizes="25vw" className="object-cover" />
-              </div>
+            <ClipReveal key={src} delay={n * 0.15} from={n ? "right" : "left"} className="aspect-[310/237]">
+              <Image src={src} alt="" fill sizes="25vw" className="object-cover" />
             </ClipReveal>
           ))}
         </div>
