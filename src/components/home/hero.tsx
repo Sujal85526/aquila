@@ -93,7 +93,7 @@ export function Hero() {
           <p data-fade data-eyebrow data-text="For those who" className="mb-3 text-[14px] uppercase tracking-[0.34em] md:mb-[1.1vw] md:text-[clamp(14px,1.5vw,24px)]">
             For those who
           </p>
-          <h1 data-headline className="font-serif text-[clamp(36px,10.2vw,56px)] font-normal uppercase leading-[1.02] tracking-[0.02em] md:text-[clamp(42px,5.5vw,92px)]">
+          <h1 data-headline className="font-[family-name:var(--font-light-serif)] text-[clamp(40px,11.4vw,64px)] font-light uppercase leading-[1.02] tracking-[0.04em] md:text-[clamp(48px,6.2vw,104px)]">
             <span className="block pb-[0.06em]">See further</span>
           </h1>
           <div data-fade className="mt-6 md:mt-[2vw]">
