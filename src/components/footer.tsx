@@ -4,7 +4,6 @@ import { Mail } from "lucide-react";
 import { InstagramIcon } from "./icons";
 import { CONTACT } from "@/lib/products";
 import { Reveal, SplitHeading } from "./motion";
-import { FooterWordmark } from "./footer-wordmark";
 
 export function Footer() {
   return (
@@ -44,7 +43,6 @@ export function Footer() {
           </a>
         </div>
       </Reveal>
-      <FooterWordmark />
       <div className="relative border-t border-ivory/15">
         <div className="mx-auto flex max-w-[1480px] flex-col gap-4 px-6 py-6 text-[10px] uppercase tracking-[0.22em] text-sand md:flex-row md:items-center md:justify-between md:px-12">
           <p>© Aquila · Abu Dhabi</p>
