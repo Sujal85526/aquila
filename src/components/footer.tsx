@@ -27,25 +27,25 @@ export function Footer() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-cocoa/95 via-cocoa/60 to-cocoa/25" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cocoa/60 to-transparent" />
       <div data-footer-inner className="relative">
-        <Reveal className="mx-auto max-w-[1480px] px-6 pb-8 pt-12 md:px-12 md:pb-10 md:pt-[3.5vw]">
+        <Reveal className="mx-auto max-w-[1480px] px-6 pb-8 pt-12 md:px-12 md:pb-14 md:pt-[5vw]">
           <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="eyebrow text-sand">Contact us</p>
-              <SplitHeading className="display mt-4 text-[clamp(30px,3.4vw,52px)] leading-[1.04]">
+              <SplitHeading className="display mt-4 text-[clamp(36px,6vw,92px)] leading-[0.98]">
                 <span className="block">We’re here</span>
                 <span className="block">for you.</span>
               </SplitHeading>
             </div>
             <a
               href={`mailto:${CONTACT.email}`}
-              className="group inline-flex w-fit items-center gap-3 border-b border-ivory/40 pb-2 text-[15px] tracking-wide transition-colors hover:border-ivory md:mb-2 md:text-[15px]"
+              className="group inline-flex w-fit items-center gap-3 border-b border-ivory/40 pb-2 text-[15px] tracking-wide transition-colors hover:border-ivory md:mb-3 md:text-[17px]"
             >
               {CONTACT.email}
               <ArrowUpRight size={18} strokeWidth={1.2} className="transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-ivory/15 pt-8 md:mt-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-x-12 md:pt-9">
+          <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-ivory/15 pt-8 md:mt-16 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-x-12 md:pt-12">
             <div className="col-span-2 md:col-span-1">
               <Logo className="w-[104px] md:w-[124px]" />
               <p className="mt-5 max-w-[26ch] font-[family-name:var(--font-light-serif)] text-[19px] italic leading-snug text-sand md:text-[22px]">
