@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Gallery } from "@/components/product/gallery";
 import { Purchase } from "@/components/product/purchase";
 import { ProductCard } from "@/components/product-card";
-import { Reveal } from "@/components/reveal";
+import { Reveal } from "@/components/motion";
 import { bySlug, products } from "@/lib/products";
 
 export function generateStaticParams() {

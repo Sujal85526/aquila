@@ -1,4 +1,7 @@
-# AQUILA
+# AQUILA — v2 (motion)
+
+This branch (`v2-motion`) is the animated version: same layout, content and theme as v1 (`main`), with an Al Khoud-style GSAP motion system — clip-path curtain loader, SplitText/Scramble text reveals, slide wipes, scroll-scrubbed text, drawn icons, magnetic buttons, a trailing cursor, a fly-to-bag add-to-cart, and a hide-on-scroll header.
+
 
 E-commerce storefront for **Aquila**, a UAE-born sunglasses brand. Built from the *Aquila Brand Guidelines* deck.
 

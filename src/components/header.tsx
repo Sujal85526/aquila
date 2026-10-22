@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
+import { gsap } from "@/lib/gsap";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { AccountIcon, BagIcon, SearchIcon } from "./icons";
 import { Logo } from "./logo";
@@ -25,10 +25,30 @@ export function Header() {
   const count = useCart((s) => s.lines.reduce((n, l) => n + l.qty, 0));
   const setOpen = useCart((s) => s.setOpen);
   const menuRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLElement>(null);
+  const badgeRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    if (mounted && count > 0 && badgeRef.current) gsap.fromTo(badgeRef.current, { scale: 1.9 }, { scale: 1, duration: 0.8, ease: "elastic.out(1,0.5)" });
+  }, [count, mounted]);
+  useEffect(() => {
+    let last = window.scrollY;
+    let hidden = false;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      const down = y > last + 4;
+      const up = y < last - 4;
+      if (down && y > 260 && !hidden) {
+        hidden = true;
+        gsap.to(barRef.current, { yPercent: -100, duration: 0.6, ease: "power3.inOut" });
+      } else if ((up || y < 260) && hidden) {
+        hidden = false;
+        gsap.to(barRef.current, { yPercent: 0, duration: 0.6, ease: "power3.out" });
+      }
+      if (down || up) last = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -63,14 +83,16 @@ export function Header() {
   return (
     <>
       <header
+        ref={barRef}
         className={`fixed inset-x-0 top-0 z-50 transition-[background,color] duration-500 ${tone} ${bg}`}
         style={{ height: "var(--header-h)" }}
       >
         <div className="mx-auto grid h-full max-w-[1480px] grid-cols-[1fr_auto_1fr] items-center px-5 md:px-12">
           <nav aria-label="Primary" className="hidden gap-10 md:flex">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="eyebrow link-underline pb-1 tracking-[0.24em]">
-                {n.label}
+              <Link key={n.href} href={n.href} className="eyebrow group relative inline-block overflow-hidden py-1 tracking-[0.24em]">
+                <span className="block transition-transform duration-500 ease-[cubic-bezier(.7,0,.2,1)] group-hover:-translate-y-full">{n.label}</span>
+                <span aria-hidden className="absolute inset-x-0 top-1 block translate-y-[130%] transition-transform duration-500 ease-[cubic-bezier(.7,0,.2,1)] group-hover:translate-y-0">{n.label}</span>
               </Link>
             ))}
           </nav>
@@ -99,7 +121,7 @@ export function Header() {
             <button aria-label="Open bag" onClick={() => setOpen(true)} className="relative p-1">
               <BagIcon size={23} />
               {mounted && count > 0 && (
-                <span className={`absolute -bottom-0.5 -right-1.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-normal ${tone === "text-ink" ? "bg-ink text-ivory" : "bg-ivory text-espresso"}`}>
+                <span ref={badgeRef} className={`absolute -bottom-0.5 -right-1.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-normal ${tone === "text-ink" ? "bg-ink text-ivory" : "bg-ivory text-espresso"}`}>
                   {count}
                 </span>
               )}

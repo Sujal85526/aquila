@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
+import { gsap } from "@/lib/gsap";
 import { Minus, Plus, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { aed, bySlug } from "@/lib/products";
@@ -24,7 +24,8 @@ export function CartDrawer() {
     document.body.style.overflow = open ? "hidden" : "";
     if (open) {
       gsap.to(veil.current, { opacity: 1, duration: 0.4 });
-      gsap.to(panel.current, { xPercent: 0, x: 0, duration: 0.6, ease: "power3.out" });
+      gsap.to(panel.current, { xPercent: 0, x: 0, duration: 0.7, ease: "expo.out" });
+      gsap.fromTo(panel.current?.querySelectorAll("li") ?? [], { autoAlpha: 0, x: 40 }, { autoAlpha: 1, x: 0, duration: 0.8, stagger: 0.09, delay: 0.25, ease: "expo.out" });
     } else {
       gsap.to(veil.current, { opacity: 0, duration: 0.3 });
       gsap.to(panel.current, { xPercent: 100, x: 0, duration: 0.45, ease: "power3.in" });

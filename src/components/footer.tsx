@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import { InstagramIcon } from "./icons";
 import { CONTACT } from "@/lib/products";
-import { Reveal } from "./reveal";
+import { Reveal, SplitHeading } from "./motion";
+import { FooterWordmark } from "./footer-wordmark";
 
 export function Footer() {
   return (
@@ -19,11 +20,10 @@ export function Footer() {
       <Reveal className="mx-auto grid max-w-[1480px] gap-12 px-6 py-16 md:grid-cols-[1.1fr_auto_1fr] md:items-center md:gap-16 md:px-12 md:py-[4.5vw]">
         <div>
           <p className="eyebrow text-sand">Contact us</p>
-          <h2 className="display mt-3 text-[40px] md:text-[clamp(30px,3vw,50px)]">
-            We’re here
-            <br />
-            for you.
-          </h2>
+          <SplitHeading className="display mt-3 text-[40px] md:text-[clamp(30px,3vw,50px)]">
+            <span className="block">We’re here</span>
+            <span className="block">for you.</span>
+          </SplitHeading>
         </div>
         <span aria-hidden className="hidden h-24 w-px bg-ivory/50 md:block" />
         <div className="grid gap-8 sm:grid-cols-2">
@@ -43,6 +43,7 @@ export function Footer() {
           </a>
         </div>
       </Reveal>
+      <FooterWordmark />
       <div className="relative border-t border-ivory/15">
         <div className="mx-auto flex max-w-[1480px] flex-col gap-4 px-6 py-6 text-[10px] uppercase tracking-[0.22em] text-sand md:flex-row md:items-center md:justify-between md:px-12">
           <p>© Aquila · Abu Dhabi</p>

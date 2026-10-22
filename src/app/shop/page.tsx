@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageShell } from "@/components/page-shell";
 import { ProductCard } from "@/components/product-card";
-import { Reveal } from "@/components/reveal";
+import { Reveal } from "@/components/motion";
 import { products } from "@/lib/products";
 
 export const metadata: Metadata = { title: "The Collection" };
