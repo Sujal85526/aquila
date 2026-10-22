@@ -5,15 +5,57 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { markReady } from "@/lib/ready";
 
 const SEEN = "aquila-v2-intro";
-const CANVAS_W = 1520;
-const CANVAS_H = 1020;
-const PIVOT_X = 0.671;
-const PIVOT_Y = 0.78;
-const WING_UP = 6;
-const WING_DOWN = -62;
-const TEXT = "AQUILA · FOR THOSE WHO SEE FURTHER · AQUILA · FOR THOSE WHO SEE FURTHER · ";
 
 const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b);
+const polar = (px: number, py: number, deg: number, len: number): [number, number] => [px + Math.cos((deg * Math.PI) / 180) * len, py - Math.sin((deg * Math.PI) / 180) * len];
+const leaf = (bx: number, by: number, tx: number, ty: number, w: number) => {
+  const dx = tx - bx;
+  const dy = ty - by;
+  const L = Math.hypot(dx, dy) || 1;
+  const nx = -dy / L;
+  const ny = dx / L;
+  const mx = bx + dx * 0.5;
+  const my = by + dy * 0.5;
+  const f = (n: number) => n.toFixed(1);
+  return `M${f(bx)},${f(by)} Q${f(mx + nx * w)},${f(my + ny * w)} ${f(tx)},${f(ty)} Q${f(mx - nx * w)},${f(my - ny * w)} ${f(bx)},${f(by)}Z`;
+};
+
+interface Feather {
+  d: string;
+  fill: string;
+  /** degrees to rotate it to its folded position (left wing: clockwise-negative, right: the mirror) */
+  fold: number;
+}
+interface Wing {
+  pivot: [number, number];
+  feathers: Feather[];
+}
+
+const TIERS = [
+  { piv: [138, 112], n: 9, a0: 196, step: 9.5, lens: [110, 116, 120, 121, 119, 114, 107, 99, 90], w: 15, fill: "#ece0c0" },
+  { piv: [142, 114], n: 8, a0: 192, step: 10, lens: [66, 70, 72, 72, 70, 66, 60, 54], w: 12, fill: "#f5ead0" },
+  { piv: [145, 116], n: 7, a0: 186, step: 11, lens: [36, 38, 40, 40, 38, 34, 30], w: 9, fill: "#fbf3de" },
+] as const;
+
+function buildWing(side: "left" | "right"): Wing {
+  const feathers: Feather[] = [];
+  for (const t of TIERS) {
+    for (let i = 0; i < t.n; i++) {
+      const a = t.a0 - i * t.step;
+      const px = side === "left" ? t.piv[0] : 300 - t.piv[0];
+      const ang = side === "left" ? a : 180 - a;
+      const [tx, ty] = polar(px, t.piv[1], ang, t.lens[i]);
+      feathers.push({ d: leaf(px, t.piv[1], tx, ty, t.w), fill: t.fill, fold: side === "left" ? -(250 - a) : 250 - a });
+    }
+  }
+  return { pivot: [side === "left" ? 138 : 162, 112], feathers };
+}
+const WING_L = buildWing("left");
+const WING_R = buildWing("right");
+const TAIL = [-20, -10, 0, 10, 20].map((d) => {
+  const [tx, ty] = polar(150, 126, 270 + d, 64);
+  return leaf(150, 126, tx, ty, 10);
+});
 
 const pageLoaded = () =>
   new Promise<void>((resolve) => {
@@ -24,30 +66,16 @@ const pageLoaded = () =>
   });
 
 /**
- * Intro. An eagle circles the AQUILA seal — a ring of turning lettering with the wordmark inside —
- * in a flattened orbit, passing behind it and in front of it. When the page is ready the eagle
- * breaks away toward the corner and the ring opens outward like an iris, revealing the site.
+ * Intro. An eagle monogram — ivory feathers on espresso — draws itself on: a halo ring, then the
+ * wings unfurl feather by feather, a shimmer runs along them, and they settle into a slow beat.
+ * The AQUILA wordmark rises beneath. When the page is ready the eagle lifts away and the curtain
+ * rises with it.
  */
 export function Loader() {
   const root = useRef<HTMLDivElement>(null);
-  const bg = useRef<SVGSVGElement>(null);
-  const seal = useRef<SVGSVGElement>(null);
-  const mark = useRef<HTMLDivElement>(null);
-  const tag = useRef<HTMLParagraphElement>(null);
-  const bird = useRef<HTMLDivElement>(null);
-  const body = useRef<HTMLImageElement>(null);
-  const wing = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const el = root.current!;
-    const bgEl = bg.current!;
-    const sealEl = seal.current!;
-    const markEl = mark.current!;
-    const tagEl = tag.current!;
-    const birdEl = bird.current!;
-    const bodyEl = body.current!;
-    const wingEl = wing.current!;
-
     const finish = () => {
       document.body.style.overflow = "";
       el.style.display = "none";
@@ -63,179 +91,102 @@ export function Loader() {
       sessionStorage.setItem(SEEN, "1");
     } catch {}
 
-    /* ---------- layout in real pixels ---------- */
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-    const R = clamp(Math.min(W, H) * 0.2, 88, 150);
-    const cx = W / 2;
-    const cy = H / 2 - 10;
-    const reach = Math.hypot(W, H);
-    const CW = clamp(R * 1.75, 150, 250);
-    const CH = (CW * CANVAS_H) / CANVAS_W;
-    const rx = Math.min(R * 1.85, W * 0.42);
-    const ry = R * 0.5;
+    const q = gsap.utils.selector(el);
+    const wingL = q("[data-wing-l]")[0];
+    const wingR = q("[data-wing-r]")[0];
+    const feathersL = q("[data-wing-l] [data-f]");
+    const feathersR = q("[data-wing-r] [data-f]");
+    const allFeathers = feathersL.flatMap((f, i) => (feathersR[i] ? [f, feathersR[i]] : [f]));
+    const body = q("[data-body]");
+    const mark = q("[data-mark]");
+    const tag = q("[data-tag]");
 
-    for (const svg of [bgEl, sealEl]) svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-    const q = (root: Element, sel: string) => root.querySelector(sel)!;
-    q(bgEl, "[data-hole]").setAttribute("cx", String(cx));
-    q(bgEl, "[data-hole]").setAttribute("cy", String(cy));
-    const ringEl = q(sealEl, "[data-ring]");
-    const ring2El = q(sealEl, "[data-ring2]");
-    for (const c of [ringEl, ring2El]) {
-      c.setAttribute("cx", String(cx));
-      c.setAttribute("cy", String(cy));
-    }
-    ringEl.setAttribute("r", String(R));
-    ring2El.setAttribute("r", String(R * 0.9));
-    const textR = R * 1.13;
-    q(sealEl, "[data-textpath]").setAttribute("d", `M ${cx - textR} ${cy} a ${textR} ${textR} 0 1 1 ${2 * textR} 0 a ${textR} ${textR} 0 1 1 ${-2 * textR} 0`);
-    const tp = q(sealEl, "textPath");
-    tp.setAttribute("textLength", String(2 * Math.PI * textR - 2));
-    (q(sealEl, "[data-text]") as SVGTextElement).style.fontSize = `${Math.max(9, R * 0.1)}px`;
+    // start: feathers folded, everything else hidden
+    allFeathers.forEach((f) => {
+      const d = (f as HTMLElement).dataset;
+      gsap.set(f, { rotation: Number(d.fold), svgOrigin: d.piv });
+    });
+    gsap.set(q("[data-halo]"), { drawSVG: "0%" });
+    gsap.set(body, { autoAlpha: 0, scale: 0.6, transformOrigin: "150px 110px" });
+    gsap.set(mark, { y: 0, yPercent: 115 });
+    gsap.set(tag, { autoAlpha: 0 });
 
-    const markW = R * 1.42;
-    markEl.style.width = `${markW}px`;
-    markEl.style.left = `${cx - markW / 2}px`;
-    markEl.style.top = `${cy - (markW * 297) / 996 / 2}px`;
-    tagEl.style.top = `${cy + R * 1.75}px`;
-    birdEl.style.width = `${CW}px`;
-    birdEl.style.height = `${CH}px`;
-
-    /* ---------- initial states ---------- */
-    gsap.set([ringEl, ring2El], { drawSVG: "0%" });
-    gsap.set(q(sealEl, "[data-text]"), { autoAlpha: 0 });
-    gsap.set(markEl.firstElementChild, { y: 0, yPercent: 115 });
-    gsap.set(tagEl, { autoAlpha: 0 });
-    gsap.set(birdEl, { autoAlpha: 0 });
-
-    const s = { th: 215, intro: 0, breakout: 0, flip: 1, phase: 0, energy: 0.9, boost: 0 };
-
-    /* ---------- the eagle ---------- */
-    let last = performance.now();
-    const tick = () => {
-      const now = performance.now();
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
-      s.th += (s.breakout > 0 ? 80 : 150 + (1 - s.intro) * 60) * dt;
-      const th = (s.th * Math.PI) / 180;
-      const sin = Math.sin(th);
-      const ox = cx + rx * Math.cos(th);
-      const oy = cy + ry * sin;
-      const e = 1 - Math.pow(1 - s.intro, 3);
-      let x = ox + (1 - e) * (-W * 0.65 - ox + cx);
-      let y = oy + (1 - e) * (-H * 0.3);
-      const b = s.breakout * s.breakout;
-      x += (W * 1.15 - x) * b;
-      y += (-H * 0.25 - y) * b;
-
-      // near side of the orbit is in front of the seal and larger, far side behind and smaller
-      const depth = 0.86 + 0.24 * sin;
-      const turn = clamp(-sin * 3.2, -1, 1);
-      s.flip += ((s.breakout > 0 ? 1 : turn) - s.flip) * (1 - Math.exp(-dt * 12));
-      const dx = -rx * sin;
-      const dy = ry * Math.cos(th);
-      const slope = (Math.atan2(dy, Math.abs(dx) + 1) * 180) / Math.PI;
-      const pitch = (s.breakout > 0 ? -26 * s.breakout : clamp(slope * 0.5, -22, 22)) * (s.flip >= 0 ? 1 : -1);
-      birdEl.style.zIndex = sin > 0 ? "4" : "1";
-
-      const down = 0.5 - 0.5 * Math.sin(s.phase);
-      s.phase += Math.PI * 2 * (2.5 + s.breakout * 1.5) * dt;
-      wingEl.style.transform = `rotate(${(WING_UP + (WING_DOWN - WING_UP) * (0.85 + 0.15 * s.breakout) * down).toFixed(2)}deg)`;
-      bodyEl.style.transform = `translateY(${(1.4 - 3.4 * down).toFixed(2)}%)`;
-      birdEl.style.transform = `translate3d(${(x - PIVOT_X * CW).toFixed(1)}px, ${(y - PIVOT_Y * CH).toFixed(1)}px, 0) rotate(${pitch.toFixed(2)}deg) scaleX(${s.flip.toFixed(3)}) scale(${(depth * (1 + 0.9 * s.breakout)).toFixed(3)})`;
-    };
-    gsap.ticker.add(tick);
-
-    /* ---------- timeline ---------- */
-    const t0 = performance.now();
-    const minHold = quick ? 1400 : 3600;
+    const sp = quick ? 0.55 : 1;
     const intro = gsap.timeline();
     intro
-      .to(ringEl, { drawSVG: "100%", duration: quick ? 0.6 : 1.3, ease: "power2.inOut" }, 0)
-      .to(ring2El, { drawSVG: "100%", duration: quick ? 0.6 : 1.5, ease: "power2.inOut" }, 0.15)
-      .to(q(sealEl, "[data-text]"), { autoAlpha: 1, duration: 0.8 }, quick ? 0.2 : 0.7)
-      .to(markEl.firstElementChild, { yPercent: 0, duration: quick ? 0.7 : 1.3, ease: "expo.out" }, quick ? 0.2 : 0.8)
-      .to(birdEl, { autoAlpha: 1, duration: 0.3 }, quick ? 0 : 0.3)
-      .to(s, { intro: 1, duration: quick ? 0.9 : 1.8, ease: "power2.out" }, quick ? 0 : 0.3)
-      .to(tagEl, { autoAlpha: 1, duration: 0.2 }, quick ? 0.4 : 1.4)
-      .to(tagEl, { duration: 1.2, scrambleText: { text: "For those who see further", chars: "upperCase", speed: 0.6, revealDelay: 0.2 } }, quick ? 0.4 : 1.4);
-    const spin = gsap.to(q(sealEl, "[data-spin]"), { rotation: 360, svgOrigin: `${cx} ${cy}`, duration: 26, ease: "none", repeat: -1 });
+      .to(q("[data-halo]"), { drawSVG: "100%", duration: 1.4 * sp, ease: "power2.inOut" }, 0)
+      .to(body, { autoAlpha: 1, scale: 1, duration: 0.9 * sp, ease: "back.out(1.5)" }, 0.25 * sp)
+      .to(allFeathers, { rotation: 0, duration: 1.25 * sp, ease: "expo.out", stagger: { each: 0.02 * sp, from: "start" } }, 0.45 * sp)
+      .to(mark, { yPercent: 0, duration: 1.2 * sp, ease: "expo.out" }, 0.9 * sp)
+      .to(tag, { autoAlpha: 1, duration: 0.2 }, 1.4 * sp)
+      .to(tag, { duration: 1.2 * sp, scrambleText: { text: "For those who see further", chars: "upperCase", speed: 0.6, revealDelay: 0.2 } }, 1.4 * sp)
+      // a shimmer runs out along the feathers
+      .to(allFeathers, { fill: "#ffffff", duration: 0.25, yoyo: true, repeat: 1, ease: "sine.inOut", stagger: { each: 0.01, from: "start" } }, 1.7 * sp);
 
+    // settle into a slow wing beat and a gentle hover
+    const beat = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: "sine.inOut", duration: 0.95 }, delay: 1.6 * sp });
+    beat
+      .fromTo(wingL, { rotation: 5, svgOrigin: "138 112" }, { rotation: -9, svgOrigin: "138 112" }, 0)
+      .fromTo(wingR, { rotation: -5, svgOrigin: "162 112" }, { rotation: 9, svgOrigin: "162 112" }, 0)
+      .fromTo(body, { y: -2 }, { y: 2.5 }, 0);
+
+    const t0 = performance.now();
+    const minHold = quick ? 1400 : 3800;
     pageLoaded().then(() => {
-      const wait = Math.max(0, minHold - (performance.now() - t0));
-      gsap.delayedCall(wait / 1000, () => {
-        spin.timeScale(0.2);
+      gsap.delayedCall(Math.max(0, minHold - (performance.now() - t0)) / 1000, () => {
+        beat.timeScale(3.2);
         gsap
-          .timeline({
-            onComplete: () => {
-              gsap.ticker.remove(tick);
-              spin.kill();
-              finish();
-            },
-          })
-          .to(tagEl, { autoAlpha: 0, duration: 0.3 }, 0)
-          .to(markEl.firstElementChild, { yPercent: -115, duration: 0.55, ease: "power3.in" }, 0)
-          .to(q(sealEl, "[data-text]"), { autoAlpha: 0, duration: 0.5 }, 0.1)
-          .to(ring2El, { autoAlpha: 0, duration: 0.3 }, 0.1)
-          // the eagle breaks away…
-          .to(s, { breakout: 1, duration: 1.7, ease: "power2.in" }, 0.15)
-          // …and the ring opens like an iris
-          .to(q(bgEl, "[data-hole]"), { attr: { r: R * 0.97 }, duration: 0.5, ease: "power2.inOut" }, 0.45)
-          .call(markReady, undefined, 0.8)
-          .to(q(bgEl, "[data-hole]"), { attr: { r: reach }, duration: 1.3, ease: "aq" }, 0.95)
-          .to(ringEl, { attr: { r: reach }, duration: 1.3, ease: "aq" }, 0.95)
-          .to(ringEl, { autoAlpha: 0, duration: 0.4 }, 1.7)
-          .to(birdEl, { autoAlpha: 0, duration: 0.35 }, 1.75);
+          .timeline({ onComplete: () => finish() })
+          .to(tag, { autoAlpha: 0, duration: 0.3 }, 0)
+          .to(mark, { yPercent: -115, duration: 0.55, ease: "power3.in" }, 0.05)
+          .to(q("[data-halo]"), { autoAlpha: 0, scale: 1.2, svgOrigin: "150 110", duration: 0.5 }, 0.1)
+          .to(q("[data-emblem]"), { y: -90, scale: 1.12, autoAlpha: 0, duration: 0.95, ease: "power2.in" }, 0.2)
+          .call(markReady, undefined, 0.85)
+          .to(el, { yPercent: -100, duration: 1.15, ease: "expo.inOut" }, 0.7);
       });
     });
 
     return () => {
-      gsap.ticker.remove(tick);
-      spin.kill();
+      beat.kill();
+      intro.kill();
     };
   }, []);
 
+  const wing = (w: Wing, side: "l" | "r") => (
+    <g data-wing-l={side === "l" ? "" : undefined} data-wing-r={side === "r" ? "" : undefined}>
+      {w.feathers.map((f, i) => (
+        <path key={i} data-f data-fold={f.fold} data-piv={`${w.pivot[0]} ${w.pivot[1]}`} d={f.d} fill={f.fill} stroke="#453d38" strokeWidth="1.1" strokeLinejoin="round" />
+      ))}
+    </g>
+  );
+
   return (
-    <div ref={root} className="aq-loader fixed inset-0 z-[100]" role="status" aria-label="Loading AQUILA">
-      {/* espresso screen with a hole that the ring opens */}
-      <svg ref={bg} aria-hidden className="absolute inset-0 z-0 h-full w-full" viewBox="0 0 1000 700" preserveAspectRatio="none">
-        <defs>
-          <mask id="aq-iris-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
-            <rect x="0" y="0" width="100%" height="100%" fill="#fff" />
-            <circle data-hole cx="500" cy="350" r="0" fill="#000" />
-          </mask>
-        </defs>
-        <rect x="0" y="0" width="100%" height="100%" fill="#453d38" mask="url(#aq-iris-mask)" />
-      </svg>
-
-      {/* the seal: ring + turning lettering */}
-      <svg ref={seal} aria-hidden className="absolute inset-0 z-[2] h-full w-full" viewBox="0 0 1000 700" preserveAspectRatio="none">
-        <defs>
-          <path data-textpath id="aq-seal-path" d="M0 0" />
-        </defs>
-        <g fill="none" stroke="#faf0d7" strokeLinecap="round">
-          <circle data-ring cx="500" cy="350" r="100" strokeWidth="1.6" />
-          <circle data-ring2 cx="500" cy="350" r="90" strokeWidth="0.8" strokeOpacity="0.45" />
-        </g>
-        <g data-spin>
-          <text data-text fill="#d8c7b5" style={{ letterSpacing: "0.32em", fontFamily: "var(--font-jost), system-ui" }}>
-            <textPath href="#aq-seal-path" startOffset="0" lengthAdjust="spacing">{TEXT}</textPath>
-          </text>
-        </g>
-      </svg>
-
-      <div ref={mark} className="absolute z-[3] overflow-hidden text-ivory" style={{ width: 160 }}>
-        <span className="aq-logo block w-full" />
+    <div ref={root} className="aq-loader fixed inset-0 z-[100] flex flex-col items-center justify-center bg-espresso" role="status" aria-label="Loading AQUILA">
+      <div data-emblem className="relative w-[min(88vw,470px)]">
+        <svg viewBox="-10 -4 320 214" aria-hidden className="h-auto w-full overflow-visible">
+          <circle data-halo cx="150" cy="108" r="112" fill="none" stroke="#faf0d7" strokeWidth="0.8" strokeOpacity="0.5" />
+          {wing(WING_L, "l")}
+          {wing(WING_R, "r")}
+          <g data-body>
+            {TAIL.map((d, i) => (
+              <path key={i} d={d} fill="#e6d8b4" stroke="#453d38" strokeWidth="1.1" strokeLinejoin="round" />
+            ))}
+            <path d="M131 96 Q150 84 169 96 L165 132 Q150 148 135 132 Z" fill="#f5ead0" stroke="#453d38" strokeWidth="1.2" />
+            <path d="M140 104 q10 6 20 0 M139 114 q11 7 22 0 M140 124 q10 6 20 0" fill="none" stroke="#453d38" strokeWidth="1" opacity="0.55" />
+            {/* head in profile, facing right, with a hooked beak and a stern brow */}
+            <path d="M146 96 C145 85 147 75 154 71 C160 69 165 71 168 75 C172 76 177 79 178 83 C176 86 173 87 170 86 C168 84 166 85 165 88 C162 93 156 97 146 96 Z" fill="#fbf3de" stroke="#453d38" strokeWidth="1.2" strokeLinejoin="round" />
+            <path d="M168 75 C172 76 177 79 178 83 C176 86 173 87 170 86 C169 82 168 78 168 75 Z" fill="#d6b25a" stroke="#453d38" strokeWidth="1" strokeLinejoin="round" />
+            <path d="M154 75 L165 77.5" stroke="#453d38" strokeWidth="1.8" strokeLinecap="round" />
+            <ellipse cx="160.5" cy="79.2" rx="1.8" ry="1.5" fill="#453d38" />
+            <path d="M149 88 q4 4 9 3 M148 83 q5 4 11 3" fill="none" stroke="#453d38" strokeWidth="0.8" opacity="0.4" strokeLinecap="round" />
+          </g>
+        </svg>
       </div>
-      <p ref={tag} className="absolute inset-x-0 z-[3] text-center text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]" />
 
-      {/* the eagle */}
-      <div ref={bird} aria-hidden className="pointer-events-none absolute left-0 top-0 opacity-0 will-change-transform" style={{ zIndex: 1, transformOrigin: `${PIVOT_X * 100}% ${PIVOT_Y * 100}%` }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img ref={body} src="/eagle/body.webp" alt="" width={CANVAS_W} height={CANVAS_H} decoding="async" draggable={false} className="absolute inset-0 h-full w-full select-none" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img ref={wing} src="/eagle/wing.webp" alt="" width={CANVAS_W} height={CANVAS_H} decoding="async" draggable={false} className="absolute inset-0 h-full w-full select-none" style={{ transformOrigin: `${PIVOT_X * 100}% ${PIVOT_Y * 100}%` }} />
+      <div className="mt-8 w-[min(58vw,260px)] overflow-hidden text-ivory">
+        <span data-mark className="aq-logo block w-full" />
       </div>
+      <p data-tag className="mt-6 text-center text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]" />
     </div>
   );
 }
