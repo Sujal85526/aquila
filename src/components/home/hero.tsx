@@ -1,85 +1,60 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useLayoutEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef } from "react";
+import { ArrowRight } from "lucide-react";
 import { gsap, SplitText, ScrollTrigger, useGSAP, hasFinePointer, prefersReducedMotion } from "@/lib/gsap";
 import { whenReady } from "@/lib/ready";
 import { Magnetic } from "../motion";
 
-type Slide = {
-  id: string;
-  eyebrow: string;
-  lines: string[];
-  muted?: number; // index of a line rendered in a muted tone
-  /** headline size and side offset, taken from the brand-deck mockups */
-  size: string;
-  side: string;
-  align?: "right";
-  video?: boolean;
-  src: string;
-  pos: string;
-  mobilePos: string;
-};
-
-const FURTHER = { eyebrow: "For those who", lines: ["See further."], size: "md:text-[clamp(48px,6.1vw,104px)]" };
-// how long each slide stays: photos move along quickly, the film gets most of its 9 seconds
-const photoSeconds = 4.5;
-const filmSeconds = 8;
-
-const SLIDES: Slide[] = [
-  { id: "see-further", ...FURTHER, side: "md:pl-[15vw]", src: "/photos/DSC00450.jpg", pos: "72% 38%", mobilePos: "72% 38%" },
-  {
-    id: "perspective",
-    eyebrow: "For those who see further.",
-    lines: ["A new perspective", "on tomorrow."],
-    muted: 1,
-    size: "md:text-[clamp(40px,4.7vw,84px)]",
-    side: "md:pr-[9.5vw]",
-    align: "right",
-    src: "/photos/DSC00361.jpg",
-    pos: "28% 40%",
-    mobilePos: "24% 40%",
-  },
-  { id: "film", ...FURTHER, side: "md:pl-[15vw]", video: true, src: "/video/hero-v2-poster.jpg", pos: "50% 30%", mobilePos: "50% 30%" },
-];
-
+/**
+ * Hero: the brand film, full-bleed, with the headline. It stays pinned while the page slides up
+ * over it (curtain reveal), and only plays while it is on screen.
+ */
 export function Hero() {
   const root = useRef<HTMLElement>(null);
-  const [i, setI] = useState(0);
-  const cur = useRef(0); // index of the slide that is on screen
-  const started = useRef(false); // intro has played
-  const busy = useRef<gsap.core.Timeline | null>(null);
-  const progress = useRef<gsap.core.Tween | null>(null);
-  const splits = useRef<SplitText[]>([]);
-  const paused = useRef(false);
+  const video = useRef<HTMLVideoElement>(null);
 
-  // Phones open on the brand film, then rotate through the photos; laptops keep the original order.
-  useLayoutEffect(() => {
-    if (window.matchMedia("(max-width: 767px)").matches) {
-      const v = SLIDES.findIndex((s) => s.video);
-      cur.current = v;
-      setI(v);
-    }
-  }, []);
-
-  // Only the visible film decodes: pause it when its slide is off screen or the hero has scrolled away.
-  const inView = useRef(true);
-  const syncVideo = () => {
-    const el = root.current;
-    if (!el) return;
-    const slides = el.querySelectorAll<HTMLElement>("[data-slide]");
-    const v = slides[SLIDES.findIndex((s) => s.video)]?.querySelector("video");
-    if (!v) return;
-    if (inView.current && cur.current === SLIDES.findIndex((s) => s.video)) v.play().catch(() => {});
-    else v.pause();
-  };
+  // headline + film reveal once the intro has lifted
   useGSAP(
     () => {
+      const el = root.current!;
+      const reduce = prefersReducedMotion();
+      const split = reduce ? null : SplitText.create("[data-headline]", { type: "chars", mask: "chars" });
+      const eyebrow = el.querySelector<HTMLElement>("[data-eyebrow]")!;
+      const fades = gsap.utils.toArray<HTMLElement>("[data-fade]", el);
+      if (!reduce) {
+        gsap.set(split!.chars, { yPercent: 115 });
+        gsap.set(fades, { autoAlpha: 0, y: 14 });
+        gsap.set("[data-film]", { scale: 1.16 });
+      }
+      const off = whenReady(() => {
+        video.current?.play().catch(() => {});
+        if (reduce) return;
+        gsap
+          .timeline()
+          .to("[data-film]", { scale: 1, duration: 2.8, ease: "expo.out" }, 0)
+          .to(split!.chars, { yPercent: 0, duration: 1.2, stagger: 0.035, ease: "expo.out" }, 0.45)
+          .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.3 }, 0.4)
+          .to(eyebrow, { duration: 1.1, scrambleText: { text: eyebrow.dataset.text ?? "", chars: "upperCase", speed: 0.7, revealDelay: 0.15 } }, 0.4)
+          .to(fades.filter((f) => f !== eyebrow), { autoAlpha: 1, y: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, 0.9);
+      });
+      return () => {
+        off();
+        split?.revert();
+      };
+    },
+    { scope: root },
+  );
+
+  // only decode the film while it is on screen
+  useGSAP(
+    () => {
+      const v = video.current!;
       const io = new IntersectionObserver(([e]) => {
-        inView.current = e.isIntersecting;
-        syncVideo();
+        if (!window.__aqReady) return;
+        if (e.isIntersecting) v.play().catch(() => {});
+        else v.pause();
       }, { threshold: 0.05 });
       io.observe(root.current!);
       return () => io.disconnect();
@@ -87,271 +62,76 @@ export function Hero() {
     { scope: root },
   );
 
-  const go = (n: number) => setI((n + SLIDES.length) % SLIDES.length);
-
-  // Build the character splits once; revert on unmount.
-  useGSAP(
-    () => {
-      if (prefersReducedMotion()) return;
-      const el = root.current!;
-      splits.current = gsap.utils.toArray<HTMLElement>("[data-headline]", el).map((h) => SplitText.create(h, { type: "chars", mask: "chars" }));
-      splits.current.forEach((s) => gsap.set(s.chars, { yPercent: 115 }));
-      gsap.set(gsap.utils.toArray("[data-fade]", el), { autoAlpha: 0, y: 14 });
-      return () => splits.current.forEach((s) => s.revert());
-    },
-    { scope: root },
-  );
-
-  // Slide changes (and the first reveal once the loader has lifted).
-  useGSAP(
-    () => {
-      const el = root.current!;
-      const slides = gsap.utils.toArray<HTMLElement>("[data-slide]", el);
-      const reduce = prefersReducedMotion();
-
-      const textIn = (s: HTMLElement, at: number, tl: gsap.core.Timeline) => {
-        const idx = slides.indexOf(s);
-        const chars = splits.current[idx]?.chars;
-        if (chars && !reduce) tl.to(chars, { yPercent: 0, duration: 1.2, stagger: 0.035, ease: "expo.out" }, at);
-        const eyebrow = s.querySelector<HTMLElement>("[data-eyebrow]");
-        if (eyebrow && !reduce) {
-          const text = eyebrow.dataset.text ?? "";
-          tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.3 }, at)
-            .to(eyebrow, { duration: 1.1, scrambleText: { text, chars: "upperCase", speed: 0.7, revealDelay: 0.15 } }, at);
-        } else if (eyebrow) tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.2 }, at);
-        if (!reduce) tl.add(() => { gsap.fromTo(s.querySelector("[data-bg]"), { scale: 1 }, { scale: 1.07, duration: 14, ease: "none" }); }, at);
-        tl.to(s.querySelectorAll("[data-fade]:not([data-eyebrow])"), { autoAlpha: 1, y: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, at + 0.35);
-      };
-      const textOut = (s: HTMLElement, tl: gsap.core.Timeline) => {
-        const idx = slides.indexOf(s);
-        const chars = splits.current[idx]?.chars;
-        if (chars) tl.to(chars, { yPercent: -115, duration: 0.5, stagger: 0.01, ease: "power3.in" }, 0);
-        tl.to(s.querySelectorAll("[data-fade]"), { autoAlpha: 0, y: -10, duration: 0.35 }, 0);
-      };
-      const startProgress = (idx: number) => {
-        progress.current?.kill();
-        const fills = gsap.utils.toArray<HTMLElement>("[data-fill]", el);
-        fills.forEach((f, n) => gsap.set(f, { scaleX: n === idx ? 0 : 0 }));
-        progress.current = gsap.to(fills[idx], { scaleX: 1, duration: SLIDES[idx].video ? filmSeconds : photoSeconds, ease: "none", onComplete: () => !paused.current && go(idx + 1) });
-        if (paused.current) progress.current.pause();
-      };
-
-      // first load: hold everything hidden, then reveal when the loader lifts
-      if (!started.current) {
-        slides.forEach((s, n) => gsap.set(s, { autoAlpha: n === i ? 1 : 0, zIndex: n === i ? 2 : 1 }));
-        const play = () => {
-          started.current = true;
-          cur.current = i;
-          const s = slides[i];
-          const tl = gsap.timeline();
-          if (!reduce) {
-            tl.fromTo(s.querySelector("[data-inner]"), { scale: 1.16 }, { scale: 1, duration: 2.8, ease: "expo.out" }, 0);
-          }
-          textIn(s, reduce ? 0 : 0.75, tl);
-          tl.to(el.querySelectorAll("[data-ui]"), { autoAlpha: 1, duration: 0.8 }, reduce ? 0 : 1.2);
-          tl.add(() => { startProgress(i); syncVideo(); }, reduce ? 0 : 1.2);
-        };
-        const off = whenReady(play);
-        return () => off();
-      }
-
-      // slide change: wipe the new slide in over the old one
-      if (i === cur.current) return;
-      busy.current?.progress(1);
-      const next = slides[i];
-      const prev = slides[cur.current];
-      const tl = gsap.timeline({
-        onComplete: () => {
-          gsap.set(prev, { autoAlpha: 0, zIndex: 1 });
-          gsap.set(prev.querySelector("[data-inner]"), { xPercent: 0 });
-          gsap.set(next, { zIndex: 2 });
-          syncVideo();
-          busy.current = null;
-        },
-      });
-      busy.current = tl;
-      cur.current = i;
-      progress.current?.kill();
-      gsap.set(next, { autoAlpha: 1, zIndex: 3, xPercent: reduce ? 0 : 100 });
-      gsap.set(next.querySelector("[data-inner]"), { xPercent: reduce ? 0 : -100 });
-      gsap.set(prev, { zIndex: 2 });
-      textOut(prev, tl);
-      if (!reduce) {
-        tl.to(next, { xPercent: 0, duration: 1.3, ease: "expo.inOut" }, 0.1)
-          .to(next.querySelector("[data-inner]"), { xPercent: 0, duration: 1.3, ease: "expo.inOut" }, 0.1)
-          .to(prev.querySelector("[data-inner]"), { xPercent: -22, duration: 1.3, ease: "expo.inOut" }, 0.1);
-      }
-      textIn(next, 0.7, tl);
-      tl.add(() => startProgress(i), 0.9);
-    },
-    { scope: root, dependencies: [i] },
-  );
-
-  // Slide counter: digits roll to the current slide.
-  useGSAP(
-    () => {
-      gsap.to("[data-count]", { yPercent: -(100 / SLIDES.length) * i, duration: 0.9, ease: "expo.inOut" });
-    },
-    { scope: root, dependencies: [i] },
-  );
-
-  // Headline letters lean away from the pointer (laptops only).
-  useGSAP(
-    () => {
-      if (!hasFinePointer() || prefersReducedMotion()) return;
-      const el = root.current!;
-      let setters: ((v: number) => void)[] = [];
-      let chars: HTMLElement[] = [];
-      let owner = -1;
-      const prime = () => {
-        if (owner === cur.current) return;
-        owner = cur.current;
-        chars = (splits.current[owner]?.chars as HTMLElement[]) ?? [];
-        setters = chars.map((c) => gsap.quickTo(c, "skewX", { duration: 0.55, ease: "power3" }));
-      };
-      const move = (e: PointerEvent) => {
-        prime();
-        const rects = chars.map((c) => c.getBoundingClientRect());
-        rects.forEach((r, n) => {
-          const dx = e.clientX - (r.left + r.width / 2);
-          const dy = e.clientY - (r.top + r.height / 2);
-          const k = Math.max(0, 1 - Math.hypot(dx, dy) / 280);
-          setters[n](-Math.sign(dx) * k * 20);
-        });
-      };
-      const leave = () => setters.forEach((set) => set(0));
-      el.addEventListener("pointermove", move);
-      el.addEventListener("pointerleave", leave);
-      return () => {
-        el.removeEventListener("pointermove", move);
-        el.removeEventListener("pointerleave", leave);
-      };
-    },
-    { scope: root },
-  );
-
-  // Curtain reveal.
+  // curtain reveal as the page slides over, and letters leaning away from the pointer
   useGSAP(
     () => {
       const el = root.current!;
       if (prefersReducedMotion()) return;
+      gsap.registerPlugin(ScrollTrigger);
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap
-          .timeline({
-            defaults: { ease: "none" },
-            scrollTrigger: { trigger: document.documentElement, start: 0, end: () => el.offsetHeight, scrub: true, invalidateOnRefresh: true },
-          })
+          .timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: document.documentElement, start: 0, end: () => el.offsetHeight, scrub: true, invalidateOnRefresh: true } })
           .to("[data-shade]", { opacity: 0.7 }, 0)
-          .to("[data-ui]", { opacity: 0 }, 0)
-          .to("[data-arrow]", { opacity: 0 }, 0);
+          .to("[data-ui]", { opacity: 0 }, 0);
       });
-      return () => mm.revert();
+      let cleanup = () => {};
+      if (hasFinePointer()) {
+        const chars = gsap.utils.toArray<HTMLElement>("[data-headline] div, [data-headline] span", el).filter((c) => c.children.length === 0 && (c.textContent ?? "").trim());
+        const setters = chars.map((c) => gsap.quickTo(c, "skewX", { duration: 0.55, ease: "power3" }));
+        const move = (e: PointerEvent) => {
+          const rects = chars.map((c) => c.getBoundingClientRect());
+          rects.forEach((r, n) => {
+            const dx = e.clientX - (r.left + r.width / 2);
+            const dy = e.clientY - (r.top + r.height / 2);
+            setters[n](-Math.sign(dx) * Math.max(0, 1 - Math.hypot(dx, dy) / 280) * 20);
+          });
+        };
+        const leave = () => setters.forEach((s) => s(0));
+        el.addEventListener("pointermove", move);
+        el.addEventListener("pointerleave", leave);
+        cleanup = () => {
+          el.removeEventListener("pointermove", move);
+          el.removeEventListener("pointerleave", leave);
+        };
+      }
+      return () => {
+        cleanup();
+        mm.revert();
+      };
     },
     { scope: root },
   );
 
-  const hold = (on: boolean) => {
-    paused.current = on;
-    if (on) progress.current?.pause();
-    else progress.current?.resume();
-  };
-
   return (
-    <section
-      ref={root}
-      aria-roledescription="carousel"
-      aria-label="Aquila highlights"
-      className="relative h-[100svh] min-h-[560px] overflow-hidden bg-cocoa text-ivory md:h-[100svh]"
-      onMouseEnter={() => hold(true)}
-      onMouseLeave={() => hold(false)}
-    >
-      <div data-stage className="absolute inset-0 will-change-transform">
-        {SLIDES.map((s, idx) => (
-          <div
-            key={s.id}
-            data-slide
-            className={`absolute inset-0 overflow-hidden ${s.video ? "opacity-0 max-md:opacity-100" : idx === 0 ? "opacity-100 max-md:opacity-0" : "opacity-0"}`}
-            aria-hidden={idx !== i}
-          >
-            <div data-inner className="absolute inset-0 will-change-transform">
-            {s.video ? (
-              <div data-bg className="absolute inset-0">
-                <video className="h-full w-full object-cover object-[50%_35%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" muted loop playsInline preload="metadata" />
-              </div>
-            ) : (
-              <div data-bg className="absolute inset-0">
-                <Image
-                  src={s.src}
-                  alt=""
-                  fill
-                  priority={idx === 0}
-                  quality={90}
-                  sizes="100vw"
-                  className="object-cover md:![object-position:var(--pos)]"
-                  style={{ objectPosition: s.mobilePos, ["--pos" as string]: s.pos }}
-                />
-              </div>
-            )}
-            <div className={`absolute inset-0 bg-gradient-to-r from-ink/45 via-ink/10 to-transparent ${s.align ? "md:bg-gradient-to-l" : ""}`} />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/20 md:from-ink/30 md:to-ink/15" />
+    <section ref={root} aria-label="Aquila" className="relative h-[100svh] min-h-[560px] overflow-hidden bg-cocoa text-ivory">
+      <div data-film className="absolute inset-0 will-change-transform">
+        <video ref={video} className="h-full w-full object-cover object-[50%_35%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" muted loop playsInline preload="auto" />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-ink/45 via-ink/10 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/20 md:from-ink/30 md:to-ink/15" />
 
-            <div className={`relative z-10 flex h-full items-end px-7 pb-28 md:items-center md:px-0 md:pb-0 ${s.align ? "md:justify-end md:text-right" : ""} ${s.side}`}>
-              <div className="max-w-[760px] md:pt-6">
-                <p data-fade data-eyebrow data-text={s.eyebrow} className="mb-3 text-[12px] uppercase tracking-[0.34em] md:mb-[1.1vw] md:text-[clamp(11px,1.05vw,17px)]">
-                  {s.eyebrow}
-                </p>
-                <h1 data-headline className={`font-serif text-[clamp(36px,10vw,56px)] font-normal uppercase leading-[1.02] tracking-[0.02em] ${s.size}`}>
-                  {s.lines.map((l, n) => (
-                    <span key={n} className={`block pb-[0.06em] ${s.muted === n ? "text-ivory/60" : ""}`}>
-                      {l}
-                    </span>
-                  ))}
-                </h1>
-                <div data-fade className="mt-8 md:mt-[2.3vw]">
-                  <Magnetic>
-                    <Link href="/shop" className="btn-outline" data-cursor="Shop">
-                      <span>Shop the collection</span>
-                      <ArrowRight size={13} strokeWidth={1.2} />
-                    </Link>
-                  </Magnetic>
-                </div>
-              </div>
-            </div>
-            </div>
+      <div className="relative z-10 flex h-full items-end px-7 pb-24 md:items-center md:px-0 md:pb-0 md:pl-[15vw]">
+        <div className="max-w-[760px] md:pt-6">
+          <p data-fade data-eyebrow data-text="For those who" className="mb-3 text-[12px] uppercase tracking-[0.34em] md:mb-[1.1vw] md:text-[clamp(11px,1.05vw,17px)]">
+            For those who
+          </p>
+          <h1 data-headline className="font-serif text-[clamp(40px,11vw,60px)] font-normal uppercase leading-[1.02] tracking-[0.02em] md:text-[clamp(48px,6.1vw,104px)]">
+            <span className="block pb-[0.06em]">See further.</span>
+          </h1>
+          <div data-fade className="mt-8 md:mt-[2.3vw]">
+            <Magnetic>
+              <Link href="/shop" className="btn-outline" data-cursor="Shop">
+                <span>Shop the collection</span>
+                <ArrowRight size={13} strokeWidth={1.2} />
+              </Link>
+            </Magnetic>
           </div>
-        ))}
+        </div>
       </div>
       <div data-shade aria-hidden className="pointer-events-none absolute inset-0 z-[15] bg-ink opacity-0" />
 
-      <button aria-label="Previous slide" onClick={() => go(i - 1)} data-arrow className="absolute left-3 top-1/2 z-20 hidden -translate-y-1/2 p-3 opacity-90 transition hover:opacity-100 md:block md:left-[1.6vw]">
-        <ChevronLeft size={28} strokeWidth={1} />
-      </button>
-      <button aria-label="Next slide" onClick={() => go(i + 1)} data-arrow className="absolute right-3 top-1/2 z-20 hidden -translate-y-1/2 p-3 opacity-90 transition hover:opacity-100 md:block md:right-[1.6vw]">
-        <ChevronRight size={28} strokeWidth={1} />
-      </button>
-
-      <div data-ui style={{ opacity: 0 }} className="absolute inset-x-0 bottom-7 z-20 flex justify-center gap-3 md:bottom-[1.6vw]">
-        {SLIDES.map((s, idx) => (
-          <button key={s.id} aria-label={`Go to slide ${idx + 1}`} aria-current={idx === i} onClick={() => go(idx)} className={`group relative h-6 w-10 ${s.video ? "max-md:-order-1" : ""}`}>
-            <span className="absolute inset-x-0 top-1/2 block h-px -translate-y-1/2 bg-ivory/35 transition-all group-hover:h-[2px]" />
-            <span data-fill className="absolute inset-x-0 top-1/2 block h-px origin-left -translate-y-1/2 scale-x-0 bg-ivory group-hover:h-[2px]" />
-          </button>
-        ))}
-      </div>
-
-      <div data-ui style={{ opacity: 0 }} className="absolute bottom-7 left-7 z-20 hidden items-center gap-3 text-[11px] tracking-[0.3em] md:bottom-[1.6vw] md:left-[4vw] md:flex">
-        <span className="relative block h-[1.2em] w-[1.5em] overflow-hidden">
-          <span data-count className="block">
-            {SLIDES.map((s, n) => (
-              <span key={s.id} className="block h-[1.2em] leading-[1.2em]">0{n + 1}</span>
-            ))}
-          </span>
-        </span>
-        <span className="h-px w-8 bg-ivory/40" />
-        <span className="text-ivory/60">0{SLIDES.length}</span>
-      </div>
-      <div data-ui style={{ opacity: 0 }} className="absolute bottom-7 right-7 z-20 hidden items-center gap-3 md:bottom-[1.6vw] md:right-[4vw] md:flex">
+      <div data-ui className="absolute bottom-7 right-7 z-20 hidden items-center gap-3 md:bottom-[1.6vw] md:right-[4vw] md:flex">
         <span className="text-[10px] uppercase tracking-[0.34em]">Scroll</span>
         <span className="relative block h-10 w-px overflow-hidden bg-ivory/30">
           <span className="aq-cue absolute inset-x-0 top-0 h-1/2 bg-ivory" />

@@ -5,6 +5,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
 import { Loader } from "@/components/loader";
+import { introScript } from "@/lib/intro";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Eagle } from "@/components/eagle";
@@ -34,7 +35,10 @@ export const viewport: Viewport = { themeColor: "#453d38" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${playfair.variable} ${jost.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${jost.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: introScript }} />
+      </head>
       <body className="min-h-dvh">
         <Loader />
         <noscript><style>{".aq-loader{display:none!important}"}</style></noscript>
