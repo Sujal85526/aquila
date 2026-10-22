@@ -9,17 +9,17 @@ export function Footer() {
   return (
     <footer className="relative isolate overflow-hidden bg-cocoa text-ivory">
       <Image
-        src="/photos/DSC00712.jpg"
+        src="/deck/footer.jpg"
         alt=""
         fill
         sizes="100vw"
-        className="-z-20 object-cover object-[50%_30%] opacity-45"
+        className="-z-20 object-cover object-[50%_40%]"
       />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cocoa via-cocoa/80 to-cocoa/50" />
-      <Reveal className="mx-auto grid max-w-[1480px] gap-12 px-6 py-20 md:grid-cols-[1.1fr_auto_1fr] md:items-center md:gap-16 md:px-12 md:py-24">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cocoa/90 via-cocoa/70 to-cocoa/30" />
+      <Reveal className="mx-auto grid max-w-[1480px] gap-12 px-6 py-16 md:grid-cols-[1.1fr_auto_1fr] md:items-center md:gap-16 md:px-12 md:py-[4.5vw]">
         <div>
           <p className="eyebrow text-sand">Contact us</p>
-          <h2 className="display mt-4 text-[44px] md:text-[56px]">
+          <h2 className="display mt-3 text-[40px] md:text-[clamp(30px,3vw,50px)]">
             We’re here
             <br />
             for you.

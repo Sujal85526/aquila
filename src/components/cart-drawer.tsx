@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { Minus, Plus, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { aed, bySlug } from "@/lib/products";
-import { Glasses } from "./glasses";
+import Image from "next/image";
 
 export function CartDrawer() {
   const { open, setOpen, lines, setQty, remove } = useCart();
@@ -66,8 +66,8 @@ export function CartDrawer() {
             <ul data-lenis-prevent className="flex-1 divide-y divide-ink/10 overflow-y-auto px-6">
               {items.map(({ p, qty }) => (
                 <li key={p.slug} className="flex gap-5 py-6">
-                  <Link href={`/products/${p.slug}`} onClick={() => setOpen(false)} className="grid h-24 w-28 shrink-0 place-items-center bg-[#ece3d3] p-2">
-                    <Glasses product={p} className="w-full" />
+                  <Link href={`/products/${p.slug}`} onClick={() => setOpen(false)} className="relative block h-24 w-28 shrink-0 overflow-hidden bg-[#ede8e2]">
+                    <Image src={p.tile} alt={p.name} fill sizes="112px" className="object-cover object-center" />
                   </Link>
                   <div className="flex flex-1 flex-col">
                     <p className="eyebrow tracking-[0.22em]">{p.name}</p>

@@ -1,23 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Box, Plus, ShieldCheck, Truck } from "lucide-react";
-import { Glasses } from "../glasses";
-import { CARE_GUIDE, aed, products, type Product } from "@/lib/products";
+import { ACCORDIONS, TBC, aed, products, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 
 export function Purchase({ product }: { product: Product }) {
   const add = useCart((s) => s.add);
   const [added, setAdded] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
-
-  const sections = [
-    { id: "details", label: "Product details", body: product.details },
-    { id: "materials", label: "Materials", body: product.materials },
-    { id: "size", label: "Size & fit", body: product.size.map((s) => `${s.label}: ${s.value}`) },
-    { id: "care", label: "Care guide", body: CARE_GUIDE },
-  ];
 
   return (
     <div className="md:sticky md:top-[calc(var(--header-h)+24px)] md:self-start">
@@ -31,8 +24,8 @@ export function Purchase({ product }: { product: Product }) {
         <div className="mt-3 grid grid-cols-4 gap-2.5">
           {products.map((p) => (
             <Link key={p.slug} href={`/products/${p.slug}`} aria-label={`${p.name} — ${p.colour}`} aria-current={p.slug === product.slug} scroll={false}
-              className={`grid h-[54px] place-items-center bg-[#ece3d3] px-1.5 transition ${p.slug === product.slug ? "outline outline-1 outline-offset-2 outline-ink" : "opacity-80 hover:opacity-100"}`}>
-              <Glasses product={p} className="w-full" />
+              className={`relative block aspect-[1.65] overflow-hidden bg-[#ede8e2] transition ${p.slug === product.slug ? "outline outline-1 outline-offset-2 outline-ink" : "opacity-85 hover:opacity-100"}`}>
+              <Image src={p.tile} alt="" fill sizes="100px" className="object-cover" />
             </Link>
           ))}
         </div>
@@ -66,7 +59,7 @@ export function Purchase({ product }: { product: Product }) {
       </div>
 
       <div className="mt-9 border-t border-ink/25">
-        {sections.map((s) => {
+        {ACCORDIONS.map((s) => {
           const isOpen = open === s.id;
           return (
             <div key={s.id} className="border-b border-ink/25">
@@ -75,9 +68,7 @@ export function Purchase({ product }: { product: Product }) {
                 <Plus size={15} strokeWidth={1.1} className={`transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`} />
               </button>
               <div className={`grid transition-all duration-500 ease-out ${isOpen ? "grid-rows-[1fr] pb-5 opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-                <ul className="space-y-2 overflow-hidden text-[12.5px] leading-[1.8] tracking-[0.04em] text-ink/70">
-                  {s.body.map((b) => <li key={b}>— {b}</li>)}
-                </ul>
+                <p className="overflow-hidden text-[12.5px] leading-[1.8] tracking-[0.04em] text-ink/70">{TBC}</p>
               </div>
             </div>
           );

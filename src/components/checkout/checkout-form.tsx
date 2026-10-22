@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Check, ChevronDown, CreditCard, HandCoins, Minus, Plus, Trash2, Truck } from "lucide-react";
-import { Glasses } from "../glasses";
+import Image from "next/image";
 import { useCart } from "@/lib/cart";
 import { EMIRATES, SHIPPING, aed, bySlug } from "@/lib/products";
 
@@ -161,7 +161,7 @@ export function CheckoutForm() {
           <ul className="mt-8 divide-y divide-ink/15 border-b border-ink/25">
             {items.map(({ p, qty }) => (
               <li key={p.slug} className="flex gap-5 pb-7 pt-1">
-                <div className="grid h-[112px] w-[132px] shrink-0 place-items-center bg-[#e6d9c3] p-3"><Glasses product={p} className="w-full" /></div>
+                <div className="relative h-[112px] w-[132px] shrink-0 overflow-hidden bg-[#ede8e2]"><Image src={p.tile} alt={p.name} fill sizes="132px" className="object-cover" /></div>
                 <div className="flex flex-1 flex-col">
                   <p className="eyebrow text-[12px] tracking-[0.24em]">{p.name}</p>
                   <p className="mt-1.5 text-[13px] text-taupe">{p.colour}</p>
