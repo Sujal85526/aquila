@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { gsap, SplitText, ScrollTrigger, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, SplitText, ScrollTrigger, useGSAP, hasFinePointer, prefersReducedMotion } from "@/lib/gsap";
 import { whenReady } from "@/lib/ready";
 import { Magnetic } from "../motion";
 
@@ -117,6 +117,7 @@ export function Hero() {
           tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.3 }, at)
             .to(eyebrow, { duration: 1.1, scrambleText: { text, chars: "upperCase", speed: 0.7, revealDelay: 0.15 } }, at);
         } else if (eyebrow) tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.2 }, at);
+        if (!reduce) tl.add(() => { gsap.fromTo(s.querySelector("[data-bg]"), { scale: 1 }, { scale: 1.07, duration: 14, ease: "none" }); }, at);
         tl.to(s.querySelectorAll("[data-fade]:not([data-eyebrow])"), { autoAlpha: 1, y: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, at + 0.35);
       };
       const textOut = (s: HTMLElement, tl: gsap.core.Timeline) => {
@@ -142,8 +143,7 @@ export function Hero() {
           const s = slides[i];
           const tl = gsap.timeline();
           if (!reduce) {
-            tl.fromTo(s, { xPercent: -100 }, { xPercent: 0, duration: 1.5, ease: "expo.inOut" }, 0)
-              .fromTo(s.querySelector("[data-inner]"), { xPercent: 100 }, { xPercent: 0, duration: 1.5, ease: "expo.inOut" }, 0);
+            tl.fromTo(s.querySelector("[data-inner]"), { scale: 1.16 }, { scale: 1, duration: 2.8, ease: "expo.out" }, 0);
           }
           textIn(s, reduce ? 0 : 0.75, tl);
           tl.to(el.querySelectorAll("[data-ui]"), { autoAlpha: 1, duration: 0.8 }, reduce ? 0 : 1.2);
@@ -185,7 +185,50 @@ export function Hero() {
     { scope: root, dependencies: [i] },
   );
 
-  // Curtain reveal + mouse parallax.
+  // Slide counter: digits roll to the current slide.
+  useGSAP(
+    () => {
+      gsap.to("[data-count]", { yPercent: -(100 / SLIDES.length) * i, duration: 0.9, ease: "expo.inOut" });
+    },
+    { scope: root, dependencies: [i] },
+  );
+
+  // Headline letters lean away from the pointer (laptops only).
+  useGSAP(
+    () => {
+      if (!hasFinePointer() || prefersReducedMotion()) return;
+      const el = root.current!;
+      let setters: ((v: number) => void)[] = [];
+      let chars: HTMLElement[] = [];
+      let owner = -1;
+      const prime = () => {
+        if (owner === cur.current) return;
+        owner = cur.current;
+        chars = (splits.current[owner]?.chars as HTMLElement[]) ?? [];
+        setters = chars.map((c) => gsap.quickTo(c, "skewX", { duration: 0.55, ease: "power3" }));
+      };
+      const move = (e: PointerEvent) => {
+        prime();
+        const rects = chars.map((c) => c.getBoundingClientRect());
+        rects.forEach((r, n) => {
+          const dx = e.clientX - (r.left + r.width / 2);
+          const dy = e.clientY - (r.top + r.height / 2);
+          const k = Math.max(0, 1 - Math.hypot(dx, dy) / 280);
+          setters[n](-Math.sign(dx) * k * 20);
+        });
+      };
+      const leave = () => setters.forEach((set) => set(0));
+      el.addEventListener("pointermove", move);
+      el.addEventListener("pointerleave", leave);
+      return () => {
+        el.removeEventListener("pointermove", move);
+        el.removeEventListener("pointerleave", leave);
+      };
+    },
+    { scope: root },
+  );
+
+  // Curtain reveal.
   useGSAP(
     () => {
       const el = root.current!;
@@ -293,6 +336,24 @@ export function Hero() {
             <span data-fill className="absolute inset-x-0 top-1/2 block h-px origin-left -translate-y-1/2 scale-x-0 bg-ivory group-hover:h-[2px]" />
           </button>
         ))}
+      </div>
+
+      <div data-ui style={{ opacity: 0 }} className="absolute bottom-7 left-7 z-20 flex items-center gap-3 text-[11px] tracking-[0.3em] md:bottom-[1.6vw] md:left-[4vw]">
+        <span className="relative block h-[1.2em] w-[1.5em] overflow-hidden">
+          <span data-count className="block">
+            {SLIDES.map((s, n) => (
+              <span key={s.id} className="block h-[1.2em] leading-[1.2em]">0{n + 1}</span>
+            ))}
+          </span>
+        </span>
+        <span className="h-px w-8 bg-ivory/40" />
+        <span className="text-ivory/60">0{SLIDES.length}</span>
+      </div>
+      <div data-ui style={{ opacity: 0 }} className="absolute bottom-7 right-7 z-20 hidden items-center gap-3 md:bottom-[1.6vw] md:right-[4vw] md:flex">
+        <span className="text-[10px] uppercase tracking-[0.34em]">Scroll</span>
+        <span className="relative block h-10 w-px overflow-hidden bg-ivory/30">
+          <span className="aq-cue absolute inset-x-0 top-0 h-1/2 bg-ivory" />
+        </span>
       </div>
     </section>
   );

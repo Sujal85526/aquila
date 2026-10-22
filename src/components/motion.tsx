@@ -46,7 +46,7 @@ export function Reveal({
       gsap.set(targets, { y, autoAlpha: 0 });
       let stop = () => {};
       const off = whenReady(() => {
-        stop = onceVisible(ref.current!, () => gsap.to(targets, { y: 0, autoAlpha: 1, duration: 1.1, delay, stagger, ease: "expo.out" }));
+        stop = onceVisible(ref.current!, () => gsap.to(targets, { y: 0, autoAlpha: 1, duration: 1.1, delay, stagger, ease: "expo.out", clearProps: "opacity,visibility,transform" }));
       });
       return () => {
         off();

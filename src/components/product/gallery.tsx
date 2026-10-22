@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, hasFinePointer, prefersReducedMotion } from "@/lib/gsap";
 import { whenReady } from "@/lib/ready";
 import { ClipReveal } from "../motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -56,6 +56,41 @@ export function Gallery({ product }: { product: Product }) {
   const root = useRef<HTMLDivElement>(null);
   const cur = shots[i];
 
+  // magnifier: the photo scales up and follows the pointer (laptops only)
+  useGSAP(
+    () => {
+      if (!hasFinePointer() || prefersReducedMotion()) return;
+      const box = stage.current!.parentElement!;
+      const target = () => stage.current!.querySelector("img");
+      let on = false;
+      const scale = 1.8;
+      const move = (e: PointerEvent) => {
+        const img = target();
+        if (!img) return;
+        const r = box.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width - 0.5;
+        const ny = (e.clientY - r.top) / r.height - 0.5;
+        if (!on) {
+          on = true;
+          gsap.to(img, { scale, duration: 0.7, ease: "expo.out", overwrite: "auto" });
+        }
+        gsap.to(img, { x: -nx * r.width * (scale - 1), y: -ny * r.height * (scale - 1), duration: 0.6, ease: "power3.out", overwrite: "auto" });
+      };
+      const leave = () => {
+        on = false;
+        const img = target();
+        if (img) gsap.to(img, { scale: 1, x: 0, y: 0, duration: 0.8, ease: "expo.out", overwrite: "auto" });
+      };
+      box.addEventListener("pointermove", move);
+      box.addEventListener("pointerleave", leave);
+      return () => {
+        box.removeEventListener("pointermove", move);
+        box.removeEventListener("pointerleave", leave);
+      };
+    },
+    { scope: root },
+  );
+
   // entrance: stage opens like a shutter, thumbnails and detail tiles follow
   useGSAP(
     () => {
@@ -94,7 +129,7 @@ export function Gallery({ product }: { product: Product }) {
       </ul>
 
       <div className="order-1 md:order-2">
-        <div className="relative aspect-[631/460] overflow-hidden bg-[#ede8e2]">
+        <div data-cursor="Zoom" className="relative aspect-[631/460] overflow-hidden bg-[#ede8e2]">
           <div ref={stage} data-stage-img className="absolute inset-0 overflow-hidden">
             <div className="absolute inset-0">
               <Image src={cur.src} alt={cur.alt} fill priority sizes="(min-width:768px) 50vw, 100vw" className={cur.fit === "contain" ? "object-contain p-[6%]" : "object-cover"} />

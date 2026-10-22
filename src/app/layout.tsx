@@ -8,6 +8,8 @@ import { Loader } from "@/components/loader";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Cursor } from "@/components/cursor";
+import { PageFrame } from "@/components/page-frame";
+import { PageTransition } from "@/components/page-transition";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -39,9 +41,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SmoothScroll>
           <ScrollProgress />
           <Cursor />
+          <PageTransition />
           <Header />
-          <main>{children}</main>
-          <Footer />
+          <PageFrame footer={<Footer />}>
+            <main>{children}</main>
+          </PageFrame>
           <CartDrawer />
         </SmoothScroll>
       </body>

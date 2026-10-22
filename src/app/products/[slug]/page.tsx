@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Gallery } from "@/components/product/gallery";
 import { Purchase } from "@/components/product/purchase";
 import { ProductCard } from "@/components/product-card";
-import { Reveal } from "@/components/motion";
+import { CardsReveal } from "@/components/cards-reveal";
 import { bySlug, products } from "@/lib/products";
 
 export function generateStaticParams() {
@@ -35,11 +35,11 @@ async function ProductContent({ params }: Pick<PageProps<"/products/[slug]">, "p
       </div>
       <section className="mx-auto max-w-[1480px] px-5 pb-20 pt-10 md:px-12" aria-labelledby="related">
         <h2 id="related" className="eyebrow mb-10 text-center text-[13px] tracking-[0.34em]">You may also like</h2>
-        <Reveal stagger={0.1} className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
+        <CardsReveal className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
           {products.map((p) => (
             <ProductCard key={p.slug} p={p} tone="tile" />
           ))}
-        </Reveal>
+        </CardsReveal>
       </section>
     </div>
   );

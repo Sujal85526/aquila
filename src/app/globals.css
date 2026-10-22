@@ -111,3 +111,11 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* hero scroll cue: a light runs down the hairline */
+@keyframes aq-cue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+.aq-cue { animation: aq-cue 2.2s cubic-bezier(.76,0,.24,1) infinite; }
+@media (prefers-reduced-motion: reduce) { .aq-cue { animation: none; } }

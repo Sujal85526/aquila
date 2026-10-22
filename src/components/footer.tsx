@@ -17,6 +17,7 @@ export function Footer() {
         className="-z-20 object-cover object-[50%_40%]"
       />
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-cocoa/90 via-cocoa/70 to-cocoa/30" />
+      <div data-footer-inner className="relative">
       <Reveal className="mx-auto grid max-w-[1480px] gap-12 px-6 py-16 md:grid-cols-[1.1fr_auto_1fr] md:items-center md:gap-16 md:px-12 md:py-[4.5vw]">
         <div>
           <p className="eyebrow text-sand">Contact us</p>
@@ -53,6 +54,7 @@ export function Footer() {
             <Link href="/our-story" className="link-underline pb-0.5">Our Story</Link>
           </nav>
         </div>
+      </div>
       </div>
     </footer>
   );

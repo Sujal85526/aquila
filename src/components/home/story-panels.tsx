@@ -49,7 +49,7 @@ export function StoryPanels() {
           });
           // parallax drift (laptops only)
           mm.add("(min-width: 768px)", () => {
-            gsap.fromTo(p.querySelector("[data-parallax]"), { yPercent: -4 }, { yPercent: 4, ease: "none", force3D: true, scrollTrigger: { trigger: p, start: "top bottom", end: "bottom top", scrub: 0.6 } });
+            gsap.fromTo(p.querySelector("[data-parallax]"), { yPercent: n ? 4 : -4 }, { yPercent: n ? -4 : 4, ease: "none", force3D: true, scrollTrigger: { trigger: p, start: "top bottom", end: "bottom top", scrub: 0.6 } });
           });
         });
       });
