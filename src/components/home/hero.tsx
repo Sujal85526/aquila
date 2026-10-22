@@ -340,7 +340,7 @@ export function Hero() {
         ))}
       </div>
 
-      <div data-ui style={{ opacity: 0 }} className="absolute bottom-7 left-7 z-20 flex items-center gap-3 text-[11px] tracking-[0.3em] md:bottom-[1.6vw] md:left-[4vw]">
+      <div data-ui style={{ opacity: 0 }} className="absolute bottom-7 left-7 z-20 hidden items-center gap-3 text-[11px] tracking-[0.3em] md:bottom-[1.6vw] md:left-[4vw] md:flex">
         <span className="relative block h-[1.2em] w-[1.5em] overflow-hidden">
           <span data-count className="block">
             {SLIDES.map((s, n) => (

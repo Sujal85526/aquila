@@ -36,6 +36,8 @@ export function Eagle() {
   const wing = useRef<HTMLImageElement>(null);
   const label = useRef<HTMLSpanElement>(null);
   const mode = useRef<"cursor" | "scroll">("scroll");
+  const pathRef = useRef(pathname);
+  pathRef.current = pathname;
 
   // the scroll eagle stays off the checkout form
   useEffect(() => {
@@ -71,6 +73,8 @@ export function Eagle() {
       target: 0,
       p: 0,
       intro: 0,
+      show: 0, // fades up once the eagle is allowed on screen
+      started: false,
       scrollVel: 0,
       lastY: window.scrollY,
     };
@@ -208,6 +212,9 @@ export function Eagle() {
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onResize);
 
+      let ready = false;
+      const off = whenReady(() => (ready = true));
+
       const tick = (_: number, dtms: number) => {
         const dt = Math.min(dtms / 1000, 0.05);
         if (!dt) return;
@@ -235,13 +242,16 @@ export function Eagle() {
         s.pitch += (clamp(slope * 0.45, -22, 22) - s.pitch) * (1 - Math.exp(-dt * 4));
         s.flip += (s.flipTarget - s.flip) * (1 - Math.exp(-dt * 5));
         flap(dt, clamp(s.scrollVel / 1500, 0, 1) + (1 - e) * 0.9);
+        const afterHero = pathRef.current === "/" ? clamp((window.scrollY - H * 0.75) / (H * 0.2), 0, 1) : 1;
+        if (afterHero > 0.01 && ready && !s.started) {
+          s.started = true;
+          gsap.to(s, { show: 1, duration: 0.6 });
+          gsap.to(s, { intro: 1, duration: 3.2, ease: "power1.inOut" });
+        }
+        el.style.opacity = String((s.show * afterHero).toFixed(3));
         el.style.transform = `translate3d(${(x - PIVOT_X * CW).toFixed(1)}px, ${(y - PIVOT_Y * CH).toFixed(1)}px, 0) rotate(${(s.pitch * s.flipTarget).toFixed(2)}deg) scaleX(${s.flip.toFixed(3)})`;
       };
       gsap.ticker.add(tick);
-      const off = whenReady(() => {
-        gsap.to(el, { opacity: 1, duration: 0.6, delay: 0.3 });
-        gsap.to(s, { intro: 1, duration: 3.6, delay: 0.3, ease: "power1.inOut" });
-      });
       stop = () => {
         off();
         gsap.ticker.remove(tick);
