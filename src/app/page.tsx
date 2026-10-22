@@ -2,6 +2,7 @@ import { Hero } from "@/components/home/hero";
 import { Collection } from "@/components/home/collection";
 import { StoryPanels } from "@/components/home/story-panels";
 import { TrustStrip } from "@/components/home/trust-strip";
+import { InstagramStrip } from "@/components/home/instagram-strip";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <Collection />
         <StoryPanels />
         <TrustStrip />
+        <InstagramStrip />
       </div>
     </>
   );
