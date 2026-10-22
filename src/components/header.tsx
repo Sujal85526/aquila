@@ -131,10 +131,10 @@ export function Header() {
       </header>
 
       {menu && (
-        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-start bg-espresso px-8 pt-[calc(var(--header-h)+20px)] text-ivory md:hidden grain">
+        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-start bg-espresso px-8 pt-[calc(var(--header-h)+48px)] text-ivory md:hidden grain">
           <video
             data-m
-            className="-mx-8 mb-8 aspect-video w-[calc(100%+4rem)] max-w-none bg-cocoa object-cover object-[50%_40%]"
+            className="-mx-8 mb-8 aspect-[2.3/1] w-[calc(100%+4rem)] max-w-none bg-cocoa object-cover object-[50%_37%]"
             src="/video/menu-teaser.mp4"
             poster="/video/menu-teaser-poster.jpg"
             autoPlay
