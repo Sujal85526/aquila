@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { ChevronDown, Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
+import { AccountIcon, BagIcon, SearchIcon } from "./icons";
 import { Logo } from "./logo";
 import { useCart } from "@/lib/cart";
 import { products } from "@/lib/products";
@@ -90,15 +91,15 @@ export function Header() {
               UAE | AED <ChevronDown size={11} strokeWidth={1.4} />
             </span>
             <button aria-label="Search" onClick={() => setSearch(true)} className="p-1">
-              <Search size={19} strokeWidth={1.2} />
+              <SearchIcon size={23} />
             </button>
             <Link href="/account" aria-label="Account" className="hidden p-1 sm:block">
-              <User size={19} strokeWidth={1.2} />
+              <AccountIcon size={23} />
             </Link>
             <button aria-label="Open bag" onClick={() => setOpen(true)} className="relative p-1">
-              <ShoppingBag size={19} strokeWidth={1.2} />
+              <BagIcon size={23} />
               {mounted && count > 0 && (
-                <span className="absolute -right-1 -top-0.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-ivory px-1 text-[9px] font-normal text-espresso">
+                <span className={`absolute -bottom-0.5 -right-1.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-normal ${tone === "text-ink" ? "bg-ink text-ivory" : "bg-ivory text-espresso"}`}>
                   {count}
                 </span>
               )}
