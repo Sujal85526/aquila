@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { whenReady } from "@/lib/ready";
 
@@ -56,6 +57,26 @@ export function Hero() {
     };
   }, [i]);
 
+  // Curtain reveal: the hero is pinned (sticky) by its wrapper; as the page slides over it, the hero
+  // slowly zooms and darkens.
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const tl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: document.documentElement, start: 0, end: () => el.offsetHeight, scrub: true, invalidateOnRefresh: true },
+      });
+      tl.to("[data-stage]", { scale: 1.08, force3D: true }, 0)
+        .to("[data-shade]", { opacity: 0.65 }, 0)
+        .to("[data-ui]", { opacity: 0 }, 0)
+        .to("[data-arrow]", { opacity: 0 }, 0);
+    });
+    return () => mm.revert();
+  }, []);
+
   useEffect(() => {
     const t = setInterval(() => !paused.current && setI((c) => (c + 1) % SLIDES.length), 7500);
     return () => clearInterval(t);
@@ -73,6 +94,7 @@ export function Hero() {
       onMouseEnter={() => (paused.current = true)}
       onMouseLeave={() => (paused.current = false)}
     >
+      <div data-stage className="absolute inset-0 will-change-transform">
       {SLIDES.map((s, idx) => (
         <div key={s.id} data-slide className="absolute inset-0 will-change-[opacity]" style={{ opacity: idx === 0 ? 1 : 0 }} aria-hidden={idx !== i}>
           {s.video ? <VideoBackdrop /> : (
@@ -109,15 +131,17 @@ export function Hero() {
           </div>
         </div>
       ))}
+      </div>
+      <div data-shade aria-hidden className="pointer-events-none absolute inset-0 z-[15] bg-ink opacity-0" />
 
-      <button aria-label="Previous slide" onClick={prev} className="absolute left-3 top-1/2 z-20 hidden -translate-y-1/2 p-3 opacity-80 transition hover:opacity-100 md:block md:left-8">
+      <button aria-label="Previous slide" onClick={prev} data-arrow className="absolute left-3 top-1/2 z-20 hidden -translate-y-1/2 p-3 opacity-80 transition hover:opacity-100 md:block md:left-8">
         <ChevronLeft size={30} strokeWidth={1} />
       </button>
-      <button aria-label="Next slide" onClick={next} className="absolute right-3 top-1/2 z-20 hidden -translate-y-1/2 p-3 opacity-80 transition hover:opacity-100 md:block md:right-8">
+      <button aria-label="Next slide" onClick={next} data-arrow className="absolute right-3 top-1/2 z-20 hidden -translate-y-1/2 p-3 opacity-80 transition hover:opacity-100 md:block md:right-8">
         <ChevronRight size={30} strokeWidth={1} />
       </button>
 
-      <div className="absolute inset-x-0 bottom-7 z-20 flex justify-center gap-3">
+      <div data-ui className="absolute inset-x-0 bottom-7 z-20 flex justify-center gap-3">
         {SLIDES.map((s, idx) => (
           <button
             key={s.id}

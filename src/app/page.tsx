@@ -6,10 +6,15 @@ import { TrustStrip } from "@/components/home/trust-strip";
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Collection />
-      <StoryPanels />
-      <TrustStrip />
+      {/* Curtain reveal: the hero stays pinned while the rest of the page slides up over it. */}
+      <div className="sticky top-0 z-0">
+        <Hero />
+      </div>
+      <div className="relative z-10 bg-paper shadow-[0_-24px_48px_-12px_rgba(20,14,10,0.45)]">
+        <Collection />
+        <StoryPanels />
+        <TrustStrip />
+      </div>
     </>
   );
 }

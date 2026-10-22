@@ -15,7 +15,10 @@ const pageLoaded = () =>
     setTimeout(done, 5000); // never trap the visitor behind the loader
   });
 
-/** Brand intro: the AQUILA wordmark wipes in while the page loads, then the espresso curtain lifts. */
+/**
+ * Horizon intro: a single line draws across the screen, the wordmark rises out of it, then the
+ * screen opens along that line — top half up, bottom half down — to reveal the page.
+ */
 export function Loader() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -35,69 +38,41 @@ export function Loader() {
         return;
       }
 
-      const counter = q("[data-count]")[0] as HTMLElement;
-      const progress = { v: 0 };
-      const paint = () => {
-        counter.textContent = String(Math.round(progress.v)).padStart(3, "0");
-      };
-
-      const tl = gsap.timeline({ defaults: { ease: "power3.inOut" } });
-      tl.to(q("[data-logo]"), { clipPath: "inset(0% 0% 0% 0%)", duration: 1.5 }, 0.25)
-        .fromTo(q("[data-logo]"), { scale: 1.06 }, { scale: 1, duration: 2, ease: "power2.out" }, 0.25)
-        .to(q("[data-tag]"), { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 1.0)
-        .to(q("[data-meta]"), { opacity: 1, duration: 0.8 }, 0.4)
-        .to(progress, { v: 90, duration: 1.7, ease: "power2.inOut", onUpdate: paint }, 0.2)
-        .to(q("[data-bar]"), { scaleX: 0.9, duration: 1.7, ease: "power2.inOut" }, 0.2);
-
-      tl.call(
-        () => {
-          tl.pause();
-          pageLoaded().then(() => {
-            const out = gsap.timeline({ defaults: { ease: "power3.inOut" }, onComplete: finish });
-            out
-              .to(progress, { v: 100, duration: 0.45, ease: "power1.out", onUpdate: paint })
-              .to(q("[data-bar]"), { scaleX: 1, duration: 0.45, ease: "power1.out" }, 0)
-              .to([q("[data-tag]"), q("[data-meta]")], { opacity: 0, duration: 0.35 }, 0.55)
-              .to(q("[data-logo-wrap]"), { yPercent: -18, opacity: 0, duration: 0.7, ease: "power2.in" }, 0.7)
-              .call(markReady, undefined, 1.0)
-              .to(el, { yPercent: -100, duration: 1.15, ease: "power4.inOut" }, 0.95)
-              .to(q("[data-curve]"), { scaleY: 0, duration: 0.9, ease: "power2.out" }, 1.45);
+      const intro = gsap.timeline();
+      intro
+        .to(q("[data-line]"), { scaleX: 1, duration: 1.1, ease: "power3.inOut" }, 0.15)
+        .fromTo(q("[data-logo]"), { y: 0, yPercent: 125 }, { yPercent: 0, duration: 1.25, ease: "power4.out" }, 0.7)
+        .to(q("[data-tag]"), { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 1.25)
+        .call(() => {
+          intro.pause();
+          // hold at least a beat on the finished mark, then open as soon as the page is ready
+          Promise.all([pageLoaded(), new Promise((r) => setTimeout(r, 450))]).then(() => {
+            gsap
+              .timeline({ onComplete: finish })
+              .to(q("[data-tag]"), { opacity: 0, duration: 0.3 }, 0)
+              .to(q("[data-line]"), { opacity: 0, duration: 0.3 }, 0.1)
+              .call(markReady, undefined, 0.3)
+              .to(q("[data-top]"), { yPercent: -100, duration: 1.2, ease: "power4.inOut" }, 0.25)
+              .to(q("[data-bottom]"), { yPercent: 100, duration: 1.2, ease: "power4.inOut" }, 0.25);
           });
-        },
-        undefined,
-        ">",
-      );
+        });
     },
     { scope: root },
   );
 
   return (
-    <div ref={root} className="aq-loader fixed inset-0 z-[100] text-ivory will-change-transform" role="status" aria-label="Loading AQUILA">
-      <div className="grain absolute inset-0 flex flex-col items-center justify-center bg-espresso">
-        <div data-logo-wrap className="relative w-[min(64vw,440px)]">
-          <span aria-hidden className="aq-logo w-full opacity-[0.12]" />
-          <span data-logo aria-hidden className="aq-logo absolute inset-0 w-full" style={{ clipPath: "inset(0% 100% 0% 0%)" }} />
-        </div>
-        <p data-tag className="mt-9 translate-y-3 text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]">
-          For those who see further
-        </p>
-
-        <div data-meta className="absolute inset-x-6 bottom-8 opacity-0 md:inset-x-12 md:bottom-10">
-          <div className="mb-4 flex items-end justify-between text-[10px] uppercase tracking-[0.3em] text-sand">
-            <span>Abu Dhabi</span>
-            <span data-count className="font-sans text-[22px] font-light tabular-nums tracking-[0.12em] text-ivory md:text-[28px]">000</span>
-          </div>
-          <div className="h-px w-full bg-ivory/15">
-            <div data-bar className="h-full origin-left scale-x-0 bg-ivory" />
-          </div>
+    <div ref={root} className="aq-loader fixed inset-0 z-[100] text-ivory" role="status" aria-label="Loading AQUILA">
+      <div data-top className="absolute inset-x-0 top-0 flex h-1/2 items-end justify-center bg-espresso will-change-transform">
+        <div className="w-[min(60vw,400px)] overflow-hidden pb-[3px]">
+          <span data-logo aria-hidden className="aq-logo w-full" style={{ transform: "translateY(125%)" }} />
         </div>
       </div>
-      <div
-        data-curve
-        aria-hidden
-        className="absolute left-0 top-full h-[14vw] w-full origin-top bg-espresso"
-        style={{ borderRadius: "0 0 50% 50% / 0 0 100% 100%" }}
-      />
+      <div data-bottom className="absolute inset-x-0 bottom-0 flex h-1/2 justify-center bg-espresso will-change-transform">
+        <p data-tag className="mt-7 translate-y-3 text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]">
+          For those who see further
+        </p>
+      </div>
+      <span data-line aria-hidden className="absolute left-0 top-1/2 z-10 block h-px w-full origin-center scale-x-0 bg-ivory/80" />
     </div>
   );
 }
