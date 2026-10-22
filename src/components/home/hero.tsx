@@ -30,7 +30,7 @@ const SLIDES: Slide[] = [
     size: "md:text-[clamp(48px,6.1vw,104px)]",
     left: "md:pl-[15vw]",
     src: "/deck/hero-1.jpg",
-    pos: "50% 50%",
+    pos: "78% 50%",
     mobilePos: "78% 50%",
   },
   {
@@ -41,7 +41,7 @@ const SLIDES: Slide[] = [
     size: "md:text-[clamp(40px,4.7vw,84px)]",
     left: "md:pl-[9.5vw]",
     src: "/deck/hero-2.jpg",
-    pos: "50% 50%",
+    pos: "76% 50%",
     mobilePos: "76% 50%",
   },
   {
@@ -121,7 +121,7 @@ export function Hero() {
       ref={root}
       aria-roledescription="carousel"
       aria-label="Aquila highlights"
-      className="relative h-[100svh] min-h-[560px] overflow-hidden bg-cocoa text-ivory md:aspect-[2.54/1] md:h-auto md:min-h-[520px]"
+      className="relative h-[100svh] min-h-[560px] overflow-hidden bg-cocoa text-ivory md:h-[100svh]"
       onMouseEnter={() => (paused.current = true)}
       onMouseLeave={() => (paused.current = false)}
     >
@@ -193,18 +193,11 @@ export function Hero() {
   );
 }
 
-/** Real brand film (portrait). Full-bleed on phones; on wide screens it sits as a framed portrait on the right. */
+/** Real brand film, full-bleed on every screen size. */
 function VideoBackdrop() {
   return (
-    <>
-      <div data-bg className="absolute inset-0 md:hidden">
-        <video className="h-full w-full object-cover object-[50%_30%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="metadata" />
-      </div>
-      <div className="absolute inset-0 hidden bg-gradient-to-r from-cocoa via-espresso to-cocoa md:block">
-        <div className="absolute inset-y-0 right-[8vw] aspect-[9/16] h-full">
-          <video data-bg className="h-full w-full object-cover" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="metadata" />
-        </div>
-      </div>
-    </>
+    <div data-bg className="absolute inset-0 will-change-transform">
+      <video className="h-full w-full object-cover object-[50%_28%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="metadata" />
+    </div>
   );
 }
