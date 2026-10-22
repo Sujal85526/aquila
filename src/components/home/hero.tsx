@@ -86,17 +86,17 @@ export function Hero() {
         <video ref={video} className="h-full w-full object-cover object-[50%_35%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" muted loop playsInline preload="auto" />
       </div>
       <div className="absolute inset-0 bg-gradient-to-r from-ink/45 via-ink/10 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/20 md:from-ink/30 md:to-ink/15" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/20 md:from-ink/60 md:to-ink/10" />
 
-      <div className="relative z-10 flex h-full items-end px-7 pb-24 md:items-center md:px-0 md:pb-0 md:pl-[15vw]">
-        <div className="max-w-[760px] md:pt-6">
-          <p data-fade data-eyebrow data-text="For those who" className="mb-3 text-[12px] uppercase tracking-[0.34em] md:mb-[1.1vw] md:text-[clamp(11px,1.05vw,17px)]">
+      <div className="relative z-10 flex h-full items-end px-6 pb-[9vh] md:px-0 md:pb-[10vh] md:pl-[4.5vw]">
+        <div className="max-w-[900px] text-[#e6d8b6]">
+          <p data-fade data-eyebrow data-text="For those who" className="mb-2 font-serif text-[clamp(30px,9.4vw,46px)] uppercase leading-[1.05] tracking-[0.06em] md:mb-[0.7vw] md:text-[clamp(38px,4.3vw,78px)]">
             For those who
           </p>
-          <h1 data-headline className="font-serif text-[clamp(40px,11vw,60px)] font-normal uppercase leading-[1.02] tracking-[0.02em] md:text-[clamp(48px,6.1vw,104px)]">
-            <span className="block pb-[0.06em]">See further.</span>
+          <h1 data-headline className="font-sans text-[clamp(13px,3.8vw,18px)] font-normal uppercase leading-[1.2] tracking-[0.46em] md:text-[clamp(15px,1.7vw,30px)]">
+            <span className="block pb-[0.06em]">See further</span>
           </h1>
-          <div data-fade className="mt-8 md:mt-[2.3vw]">
+          <div data-fade className="mt-6 md:mt-[2vw]">
             <Magnetic>
               <Link href="/shop" className="btn-outline" data-cursor="Shop">
                 <span>Shop the collection</span>

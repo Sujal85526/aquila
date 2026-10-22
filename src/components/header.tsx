@@ -11,9 +11,9 @@ import { useCart } from "@/lib/cart";
 import { products } from "@/lib/products";
 
 const NAV = [
+  { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
   { href: "/our-story", label: "Our Story" },
-  { href: "/policy", label: "Policy" },
 ];
 
 export function Header() {
@@ -133,7 +133,7 @@ export function Header() {
       {menu && (
         <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-center bg-espresso px-8 pt-[var(--header-h)] text-ivory md:hidden grain">
           <nav className="flex flex-col gap-7">
-            {[{ href: "/", label: "Home" }, ...NAV, { href: "/account", label: "Account" }].map((n) => (
+            {[...NAV, { href: "/policy", label: "Policy" }, { href: "/account", label: "Account" }].map((n) => (
               <Link key={n.href} data-m href={n.href} className="font-serif text-[40px] uppercase leading-none tracking-wide">
                 {n.label}
               </Link>
