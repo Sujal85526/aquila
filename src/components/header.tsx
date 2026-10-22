@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { AccountIcon, BagIcon, SearchIcon } from "./icons";
+import { AccountIcon, BagIcon, InstagramIcon, SearchIcon } from "./icons";
 import { Logo } from "./logo";
 import { useCart } from "@/lib/cart";
-import { products } from "@/lib/products";
+import { CONTACT, products } from "@/lib/products";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -151,9 +151,9 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <p data-m className="eyebrow mt-10 text-sand">
-            UAE | AED &nbsp;·&nbsp; @aquila.ae
-          </p>
+          <a data-m href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Aquila on Instagram" className="mt-10 inline-flex w-fit text-sand">
+            <InstagramIcon size={24} strokeWidth={1.2} />
+          </a>
         </div>
       )}
 
