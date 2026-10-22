@@ -13,48 +13,33 @@ type Slide = {
   eyebrow: string;
   lines: string[];
   muted?: number; // index of a line rendered in a muted tone
-  /** headline size and left offset, taken from the brand-deck mockups */
+  /** headline size and side offset, taken from the brand-deck mockups */
   size: string;
-  left: string;
+  side: string;
+  align?: "right";
   video?: boolean;
   src: string;
   pos: string;
   mobilePos: string;
 };
 
+const FURTHER = { eyebrow: "For those who", lines: ["See further."], size: "md:text-[clamp(48px,6.1vw,104px)]" };
+
 const SLIDES: Slide[] = [
-  {
-    id: "see-further",
-    eyebrow: "For those who",
-    lines: ["See further."],
-    size: "md:text-[clamp(48px,6.1vw,104px)]",
-    left: "md:pl-[15vw]",
-    src: "/deck/hero-1c.jpg",
-    pos: "78% 50%",
-    mobilePos: "78% 50%",
-  },
+  { id: "see-further", ...FURTHER, side: "md:pl-[15vw]", src: "/photos/DSC00450.jpg", pos: "72% 38%", mobilePos: "72% 38%" },
   {
     id: "perspective",
     eyebrow: "For those who see further.",
     lines: ["A new perspective", "on tomorrow."],
     muted: 1,
     size: "md:text-[clamp(40px,4.7vw,84px)]",
-    left: "md:pl-[9.5vw]",
-    src: "/deck/hero-2c.jpg",
-    pos: "76% 50%",
-    mobilePos: "76% 50%",
+    side: "md:pr-[9.5vw]",
+    align: "right",
+    src: "/photos/DSC00361.jpg",
+    pos: "28% 40%",
+    mobilePos: "24% 40%",
   },
-  {
-    id: "beyond",
-    eyebrow: "For those who see further.",
-    lines: ["See beyond", "the ordinary."],
-    size: "md:text-[clamp(40px,4.7vw,84px)]",
-    left: "md:pl-[9.5vw]",
-    video: true,
-    src: "/video/hero-v2-poster.jpg",
-    pos: "50% 30%",
-    mobilePos: "50% 30%",
-  },
+  { id: "film", ...FURTHER, side: "md:pl-[15vw]", video: true, src: "/video/hero-v2-poster.jpg", pos: "50% 30%", mobilePos: "50% 30%" },
 ];
 
 export function Hero() {
@@ -142,16 +127,17 @@ export function Hero() {
                   alt=""
                   fill
                   priority={idx === 0}
+                  quality={90}
                   sizes="100vw"
                   className="object-cover md:![object-position:var(--pos)]"
                   style={{ objectPosition: s.mobilePos, ["--pos" as string]: s.pos }}
                 />
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-r from-ink/35 via-ink/5 to-transparent" />
+            <div className={`absolute inset-0 bg-gradient-to-r from-ink/45 via-ink/10 to-transparent ${s.align ? "md:bg-gradient-to-l" : ""}`} />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/20 md:from-ink/30 md:to-ink/15" />
 
-            <div className={`relative z-10 flex h-full items-end px-7 pb-24 md:items-center md:px-0 md:pb-0 ${s.left}`}>
+            <div className={`relative z-10 flex h-full items-end px-7 pb-24 md:items-center md:px-0 md:pb-0 ${s.align ? "md:justify-end md:text-right" : ""} ${s.side}`}>
               <div className="max-w-[760px] md:pt-6">
                 <p data-fade style={{ opacity: 0 }} className="mb-3 text-[12px] uppercase tracking-[0.34em] md:mb-[1.1vw] md:text-[clamp(11px,1.05vw,17px)]">
                   {s.eyebrow}
@@ -202,7 +188,7 @@ export function Hero() {
 function VideoBackdrop() {
   return (
     <div data-bg className="absolute inset-0 will-change-transform">
-      <video className="h-full w-full object-cover object-[50%_28%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="auto" />
+      <video className="h-full w-full object-cover object-[50%_35%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="auto" />
     </div>
   );
 }
