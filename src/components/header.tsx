@@ -131,10 +131,10 @@ export function Header() {
       </header>
 
       {menu && (
-        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-start bg-espresso px-8 pt-[calc(var(--header-h)+16px)] text-ivory md:hidden grain">
+        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-start bg-espresso px-8 pt-[var(--header-h)] text-ivory md:hidden grain">
           <video
             data-m
-            className="mb-7 h-[28vh] max-h-[260px] w-auto self-start aspect-[9/16] bg-cocoa object-contain"
+            className="-mx-8 mb-8 aspect-video w-[calc(100%+4rem)] max-w-none bg-cocoa object-cover object-[50%_40%]"
             src="/video/menu-teaser.mp4"
             poster="/video/menu-teaser-poster.jpg"
             autoPlay
@@ -145,11 +145,24 @@ export function Header() {
             aria-hidden
           />
           <nav className="flex flex-col gap-5">
-            {[...NAV, { href: "/policy", label: "Policy" }, { href: "/account", label: "Account" }].map((n) => (
+            {NAV.map((n) => (
               <Link key={n.href} data-m href={n.href} className="font-[family-name:var(--font-instrument)] text-[28px] font-medium uppercase leading-none tracking-[-0.035em]">
                 {n.label}
               </Link>
             ))}
+            <button
+              data-m
+              className="w-fit text-left font-[family-name:var(--font-instrument)] text-[28px] font-medium uppercase leading-none tracking-[-0.035em]"
+              onClick={() => {
+                setMenu(false);
+                setTimeout(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" }), 80);
+              }}
+            >
+              Contact us
+            </button>
+            <Link data-m href="/account" className="font-[family-name:var(--font-instrument)] text-[28px] font-medium uppercase leading-none tracking-[-0.035em]">
+              Account
+            </Link>
           </nav>
           <a data-m href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Aquila on Instagram" className="mt-10 inline-flex w-fit text-sand">
             <InstagramIcon size={24} strokeWidth={1.2} />
