@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
 import { Loader } from "@/components/loader";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { Eagle } from "@/components/eagle";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Loader />
         <noscript><style>{".aq-loader{display:none!important}"}</style></noscript>
         <SmoothScroll />
+        <Eagle />
         <Header />
         <main>{children}</main>
         <Footer />
