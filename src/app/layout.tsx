@@ -8,6 +8,7 @@ import { Loader } from "@/components/loader";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Cursor } from "@/components/cursor";
+import { Eagle } from "@/components/eagle";
 import { PageFrame } from "@/components/page-frame";
 import { PageTransition } from "@/components/page-transition";
 
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <ScrollProgress />
           <Cursor />
           <PageTransition />
+          <Eagle />
           <Header />
           <PageFrame footer={<Footer />}>
             <main>{children}</main>
