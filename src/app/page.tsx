@@ -1,5 +1,4 @@
 import { Hero } from "@/components/home/hero";
-import { Marquee } from "@/components/marquee";
 import { Collection } from "@/components/home/collection";
 import { StoryPanels } from "@/components/home/story-panels";
 import { TrustStrip } from "@/components/home/trust-strip";
@@ -12,7 +11,6 @@ export default function Home() {
         <Hero />
       </div>
       <div className="relative z-10 bg-paper shadow-[0_-24px_48px_-12px_rgba(20,14,10,0.45)]">
-        <Marquee />
         <Collection />
         <StoryPanels />
         <TrustStrip />

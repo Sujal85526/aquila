@@ -30,7 +30,18 @@ export function PageFrame({ children, footer }: { children: ReactNode; footer: R
         { yPercent: -16 },
         { yPercent: 0, ease: "none", scrollTrigger: { trigger: document.documentElement, start: () => ScrollTrigger.maxScroll(window) - h, end: "max", scrub: true, invalidateOnRefresh: true } },
       );
+      const box = foot.current!;
+      const check = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        box.style.visibility = window.scrollY > max - h - window.innerHeight ? "visible" : "hidden";
+      };
+      check();
+      window.addEventListener("scroll", check, { passive: true });
+      window.addEventListener("resize", check);
       return () => {
+        window.removeEventListener("scroll", check);
+        window.removeEventListener("resize", check);
+        box.style.visibility = "";
         t.scrollTrigger?.kill();
         t.kill();
       };

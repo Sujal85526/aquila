@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import { gsap, SplitText, ScrollTrigger, useGSAP, hasFinePointer, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, SplitText, ScrollTrigger, useGSAP, prefersReducedMotion } from "@/lib/gsap";
 import { whenReady } from "@/lib/ready";
 import { Magnetic } from "../motion";
 
@@ -62,7 +62,7 @@ export function Hero() {
     { scope: root },
   );
 
-  // curtain reveal as the page slides over, and letters leaning away from the pointer
+  // curtain reveal as the page slides over
   useGSAP(
     () => {
       const el = root.current!;
@@ -75,30 +75,7 @@ export function Hero() {
           .to("[data-shade]", { opacity: 0.7 }, 0)
           .to("[data-ui]", { opacity: 0 }, 0);
       });
-      let cleanup = () => {};
-      if (hasFinePointer()) {
-        const chars = gsap.utils.toArray<HTMLElement>("[data-headline] div, [data-headline] span", el).filter((c) => c.children.length === 0 && (c.textContent ?? "").trim());
-        const setters = chars.map((c) => gsap.quickTo(c, "skewX", { duration: 0.55, ease: "power3" }));
-        const move = (e: PointerEvent) => {
-          const rects = chars.map((c) => c.getBoundingClientRect());
-          rects.forEach((r, n) => {
-            const dx = e.clientX - (r.left + r.width / 2);
-            const dy = e.clientY - (r.top + r.height / 2);
-            setters[n](-Math.sign(dx) * Math.max(0, 1 - Math.hypot(dx, dy) / 280) * 20);
-          });
-        };
-        const leave = () => setters.forEach((s) => s(0));
-        el.addEventListener("pointermove", move);
-        el.addEventListener("pointerleave", leave);
-        cleanup = () => {
-          el.removeEventListener("pointermove", move);
-          el.removeEventListener("pointerleave", leave);
-        };
-      }
-      return () => {
-        cleanup();
-        mm.revert();
-      };
+      return () => mm.revert();
     },
     { scope: root },
   );

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { useRef } from "react";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { markReady } from "@/lib/ready";
-import { INTRO_KEY } from "@/lib/intro";
 
 const pageLoaded = () =>
   new Promise<void>((resolve) => {
@@ -14,64 +13,63 @@ const pageLoaded = () =>
   });
 
 /**
- * Plain, quiet intro: the AQUILA wordmark fades up out of a blur on a solid espresso screen, holds
- * for at least 2.2 seconds (and until the page has loaded), then the whole screen fades away while
- * the wordmark drifts up, softens and disappears. Shown once per session.
+ * Horizon intro: a single line draws across the screen, the wordmark rises out of it, then the
+ * screen opens along that line — top half up, bottom half down — to reveal the page.
  */
 export function Loader() {
   const root = useRef<HTMLDivElement>(null);
-  const logo = useRef<HTMLSpanElement>(null);
 
-  useEffect(() => {
-    const el = root.current!;
-    const mark = logo.current!;
-    const finish = () => {
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-      el.style.display = "none";
-    };
+  useGSAP(
+    () => {
+      const el = root.current!;
+      const q = gsap.utils.selector(el);
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.body.style.overflow = "hidden";
+      const finish = () => {
+        document.body.style.overflow = "";
+        el.style.display = "none";
+      };
 
-    let seen = false;
-    try {
-      seen = !!sessionStorage.getItem(INTRO_KEY);
-    } catch {}
-    if (seen || prefersReducedMotion()) {
-      el.style.display = "none";
-      markReady();
-      return;
-    }
+      if (reduce) {
+        gsap.to(el, { opacity: 0, duration: 0.4, onStart: markReady, onComplete: finish });
+        return;
+      }
 
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-
-    gsap.fromTo(mark, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 2, ease: "expo.out" });
-
-    let minTime = false;
-    let loaded = false;
-    const leave = () => {
-      if (!(minTime && loaded)) return;
-      try {
-        sessionStorage.setItem(INTRO_KEY, "1");
-      } catch {}
-      markReady();
-      gsap.to(mark, { y: -80, opacity: 0, filter: "blur(4px)", duration: 1.5, ease: "expo.out" });
-      gsap.to(el, { opacity: 0, duration: 1.5, ease: "expo.out", onComplete: finish });
-    };
-    const t = setTimeout(() => {
-      minTime = true;
-      leave();
-    }, 2200);
-    pageLoaded().then(() => {
-      loaded = true;
-      leave();
-    });
-
-    return () => clearTimeout(t);
-  }, []);
+      const intro = gsap.timeline();
+      intro
+        .to(q("[data-line]"), { scaleX: 1, duration: 1.1, ease: "power3.inOut" }, 0.15)
+        .fromTo(q("[data-logo]"), { y: 0, yPercent: 125 }, { yPercent: 0, duration: 1.25, ease: "power4.out" }, 0.7)
+        .to(q("[data-tag]"), { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 1.25)
+        .call(() => {
+          intro.pause();
+          // hold at least a beat on the finished mark, then open as soon as the page is ready
+          Promise.all([pageLoaded(), new Promise((r) => setTimeout(r, 450))]).then(() => {
+            gsap
+              .timeline({ onComplete: finish })
+              .to(q("[data-tag]"), { opacity: 0, duration: 0.3 }, 0)
+              .to(q("[data-line]"), { opacity: 0, duration: 0.3 }, 0.1)
+              .call(markReady, undefined, 0.3)
+              .to(q("[data-top]"), { yPercent: -100, duration: 1.2, ease: "power4.inOut" }, 0.25)
+              .to(q("[data-bottom]"), { yPercent: 100, duration: 1.2, ease: "power4.inOut" }, 0.25);
+          });
+        });
+    },
+    { scope: root },
+  );
 
   return (
-    <div ref={root} className="aq-loader fixed inset-0 z-[100] flex items-center justify-center bg-espresso text-ivory" role="status" aria-label="Loading AQUILA">
-      <span ref={logo} className="aq-logo w-[min(60vw,180px)] opacity-0 md:w-[min(40vw,420px)]" />
+    <div ref={root} className="aq-loader fixed inset-0 z-[100] text-ivory" role="status" aria-label="Loading AQUILA">
+      <div data-top className="absolute inset-x-0 top-0 flex h-1/2 items-end justify-center bg-espresso will-change-transform">
+        <div className="w-[min(60vw,400px)] overflow-hidden pb-[3px]">
+          <span data-logo aria-hidden className="aq-logo w-full" style={{ transform: "translateY(125%)" }} />
+        </div>
+      </div>
+      <div data-bottom className="absolute inset-x-0 bottom-0 flex h-1/2 justify-center bg-espresso will-change-transform">
+        <p data-tag className="mt-7 translate-y-3 text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]">
+          For those who see further
+        </p>
+      </div>
+      <span data-line aria-hidden className="absolute left-0 top-1/2 z-10 block h-px w-full origin-center scale-x-0 bg-ivory/80" />
     </div>
   );
 }

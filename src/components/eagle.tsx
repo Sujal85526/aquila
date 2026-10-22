@@ -80,7 +80,7 @@ export function Eagle() {
     };
 
     const dims = () => {
-      const w = fine ? 150 : clamp(window.innerWidth * 0.45, 170, 240);
+      const w = fine ? 150 : clamp(window.innerWidth * 0.32, 118, 165);
       return { CW: w, CH: (w * CANVAS_H) / CANVAS_W };
     };
     let { CW, CH } = dims();
@@ -271,7 +271,7 @@ export function Eagle() {
       <div
         ref={box}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[130] opacity-0 will-change-transform [filter:drop-shadow(0_10px_9px_rgba(20,14,8,0.3))]"
+        className="pointer-events-none fixed left-0 top-0 z-[130] opacity-0 will-change-transform"
         style={{ width: 150, height: 101 }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

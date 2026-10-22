@@ -131,7 +131,3 @@ html.aq-eagle-cursor select {
   cursor: text !important;
 }
 
-/* repeat visits in a session skip the intro (set before paint by an inline script) */
-html.aq-intro-seen .aq-loader {
-  display: none !important;
-}
