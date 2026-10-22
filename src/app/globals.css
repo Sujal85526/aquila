@@ -65,6 +65,12 @@ body {
   .btn-outline:hover {
     @apply text-espresso;
   }
+  .btn-outline.on-light::before {
+    @apply bg-ink;
+  }
+  .btn-outline.on-light:hover {
+    @apply text-ivory;
+  }
   .btn-outline > * {
     @apply relative z-10;
   }

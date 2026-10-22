@@ -4,18 +4,15 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { CONTACT } from "@/lib/products";
-import { InstagramIcon } from "../icons";
-import { Reveal, SplitHeading } from "../motion";
+import { ArrowRight } from "lucide-react";
+import { Magnetic, Reveal, SplitHeading } from "../motion";
 
 const FEED = [
-  { src: "/photos/DSC00436.jpg", pos: "62% 30%" },
-  { src: "/photos/DSC00403.jpg", pos: "50% 30%" },
-  { src: "/deck/story-1c.jpg", pos: "62% 50%" },
-  { src: "/deck/story-2c.jpg", pos: "78% 50%" },
-  { src: "/photos/DSC00712.jpg", pos: "66% 35%" },
-  { src: "/photos/DSC00361.jpg", pos: "28% 40%" },
-  { src: "/photos/DSC00450.jpg", pos: "50% 35%" },
-  { src: "/photos/DSC00592.jpg", pos: "50% 35%" },
+  { src: "/instagram/post-1.jpg", href: "https://www.instagram.com/p/DVJbVolko84/", pos: "50% 60%" },
+  { src: "/instagram/post-2.jpg", href: "https://www.instagram.com/p/DVdPdMNEjDl/", pos: "50% 50%" },
+  { src: "/instagram/reel-3.jpg", href: "https://www.instagram.com/reel/DVENcHjkg51/", pos: "50% 45%" },
+  { src: "/instagram/post-4.jpg", href: "https://www.instagram.com/p/DVEITfHEsHL/", pos: "50% 50%" },
+  { src: "/instagram/reel-5.jpg", href: "https://www.instagram.com/reel/DVBr3VHkiiW/", pos: "50% 40%" },
 ];
 
 const N = FEED.length;
@@ -43,7 +40,7 @@ function Carousel() {
       const w = stageEl.clientWidth < 640 ? 190 : stageEl.clientWidth < 1100 ? 250 : 320;
       const h = Math.round(w * 1.22);
       spacing = w * (stageEl.clientWidth < 640 ? 0.52 : 0.58);
-      stageEl.style.height = `${h + 110}px`;
+      stageEl.style.height = `${h + 70}px`;
       stageEl.style.setProperty("--w", `${w}px`);
       stageEl.style.setProperty("--h", `${h}px`);
     };
@@ -67,12 +64,12 @@ function Carousel() {
 
     const goTo = (target: number) => {
       tween?.kill();
-      tween = gsap.to(state, { pos: target, duration: reduced ? 0.01 : 0.9, ease: "power3.out", onUpdate: paint });
+      tween = gsap.to(state, { pos: target, duration: reduced ? 0.01 : 1, ease: "expo.out", onUpdate: paint });
     };
     const next = (dir = 1) => goTo(Math.round(state.pos) + dir);
     const restart = () => {
       window.clearInterval(timer);
-      if (!reduced) timer = window.setInterval(() => visible && !dragging && next(1), 3600);
+      if (!reduced) timer = window.setInterval(() => visible && !dragging && next(1), 4500);
     };
 
     const down = (e: PointerEvent) => {
@@ -150,7 +147,7 @@ function Carousel() {
   return (
     <div
       ref={stage}
-      className="relative mx-auto mt-10 w-full cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing md:mt-14"
+      className="relative mx-auto mt-6 w-full cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing md:mt-8"
       style={{ perspective: "1400px", perspectiveOrigin: "50% 50%" }}
       aria-label="Aquila on Instagram"
     >
@@ -158,13 +155,13 @@ function Carousel() {
         <a
           key={f.src}
           data-card
-          href={CONTACT.instagramUrl}
+          href={f.href}
           target="_blank"
           rel="noopener noreferrer"
           data-cursor="View"
           draggable={false}
           aria-label="Aquila on Instagram"
-          className="absolute left-1/2 top-1/2 block overflow-hidden bg-cocoa shadow-[0_24px_40px_-24px_rgba(0,0,0,0.4)]"
+          className="absolute left-1/2 top-1/2 block overflow-hidden rounded-[26px] bg-cocoa shadow-[0_24px_40px_-24px_rgba(0,0,0,0.4)]"
           style={{ width: "var(--w)", height: "var(--h)" }}
         >
           <Image src={f.src} alt="" fill sizes="320px" draggable={false} className="pointer-events-none object-cover" style={{ objectPosition: f.pos }} />
@@ -178,22 +175,20 @@ export function InstagramStrip() {
   return (
     <section className="overflow-hidden bg-paper py-20 text-center md:py-32" aria-labelledby="ig-title">
       <div className="mx-auto flex max-w-[1480px] flex-col items-center px-6 md:px-12">
-        <p className="eyebrow text-ink/45">Follow the journey</p>
-        <SplitHeading as="h2" className="mt-4 font-serif text-[clamp(34px,5vw,64px)] uppercase leading-none tracking-[0.02em] text-ink">
-          <span id="ig-title">{CONTACT.instagramHandle}</span>
+        <SplitHeading as="h2" className="font-serif text-[clamp(38px,7vw,88px)] font-medium uppercase leading-[0.95] tracking-[0.02em] text-ink">
+          <span id="ig-title">Follow the journey</span>
         </SplitHeading>
-        <a
-          href={CONTACT.instagramUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-cursor="Follow"
-          className="eyebrow link-underline mt-6 flex items-center gap-2.5 pb-1 text-ink"
-        >
-          <InstagramIcon size={16} strokeWidth={1.2} /> Follow on Instagram
-        </a>
       </div>
       <Reveal>
         <Carousel />
+      </Reveal>
+      <Reveal className="mt-4 flex justify-center md:mt-8">
+        <Magnetic>
+          <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn-outline on-light text-ink" data-cursor="Follow">
+            <span>Follow us</span>
+            <ArrowRight size={13} strokeWidth={1.2} />
+          </a>
+        </Magnetic>
       </Reveal>
     </section>
   );
