@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -62,6 +62,11 @@ export function Hero() {
   const root = useRef<HTMLElement>(null);
   const first = useRef(true);
   const paused = useRef(false);
+
+  // Phones open on the brand film, then rotate through the photos; laptops keep the original order.
+  useLayoutEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) setI(SLIDES.findIndex((s) => s.video));
+  }, []);
 
   useEffect(() => {
     const el = root.current;
@@ -127,7 +132,7 @@ export function Hero() {
     >
       <div data-stage className="absolute inset-0 will-change-transform">
         {SLIDES.map((s, idx) => (
-          <div key={s.id} data-slide className="absolute inset-0 will-change-[opacity]" style={{ opacity: idx === 0 ? 1 : 0 }} aria-hidden={idx !== i}>
+          <div key={s.id} data-slide className={`absolute inset-0 will-change-[opacity] ${s.video ? "opacity-0 max-md:opacity-100" : idx === 0 ? "opacity-100 max-md:opacity-0" : "opacity-0"}`} aria-hidden={idx !== i}>
             {s.video ? (
               <VideoBackdrop />
             ) : (
@@ -185,7 +190,7 @@ export function Hero() {
             aria-label={`Go to slide ${idx + 1}`}
             aria-current={idx === i}
             onClick={() => setI(idx)}
-            className={`h-[7px] w-[7px] rounded-full border border-ivory transition-all duration-500 ${idx === i ? "bg-ivory" : "bg-transparent"}`}
+            className={`h-[7px] w-[7px] rounded-full border border-ivory transition-all duration-500 ${s.video ? "max-md:-order-1" : ""} ${idx === i ? "bg-ivory" : "bg-transparent"}`}
           />
         ))}
       </div>
@@ -197,7 +202,7 @@ export function Hero() {
 function VideoBackdrop() {
   return (
     <div data-bg className="absolute inset-0 will-change-transform">
-      <video className="h-full w-full object-cover object-[50%_28%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="metadata" />
+      <video className="h-full w-full object-cover object-[50%_28%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" autoPlay muted loop playsInline preload="auto" />
     </div>
   );
 }
