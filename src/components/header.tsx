@@ -132,14 +132,26 @@ export function Header() {
 
       {menu && (
         <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-center bg-espresso px-8 pt-[var(--header-h)] text-ivory md:hidden grain">
-          <nav className="flex flex-col gap-7">
+          <video
+            data-m
+            className="mb-8 h-[22vh] max-h-[210px] aspect-[9/16] bg-cocoa object-cover"
+            src="/video/menu-teaser.mp4"
+            poster="/video/menu-teaser-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden
+          />
+          <nav className="flex flex-col gap-5">
             {[...NAV, { href: "/policy", label: "Policy" }, { href: "/account", label: "Account" }].map((n) => (
-              <Link key={n.href} data-m href={n.href} className="font-serif text-[40px] uppercase leading-none tracking-wide">
+              <Link key={n.href} data-m href={n.href} className="font-serif text-[26px] uppercase leading-none tracking-wide">
                 {n.label}
               </Link>
             ))}
           </nav>
-          <p data-m className="eyebrow mt-14 text-sand">
+          <p data-m className="eyebrow mt-10 text-sand">
             UAE | AED &nbsp;·&nbsp; @aquila.ae
           </p>
         </div>
