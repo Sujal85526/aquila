@@ -146,7 +146,7 @@ export function Header() {
           />
           <nav className="flex flex-col gap-5">
             {[...NAV, { href: "/policy", label: "Policy" }, { href: "/account", label: "Account" }].map((n) => (
-              <Link key={n.href} data-m href={n.href} className="font-[family-name:var(--font-instrument)] text-[28px] uppercase leading-none tracking-[-0.01em]">
+              <Link key={n.href} data-m href={n.href} className="font-[family-name:var(--font-instrument)] text-[28px] font-medium uppercase leading-none tracking-[-0.035em]">
                 {n.label}
               </Link>
             ))}
