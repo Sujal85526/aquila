@@ -113,6 +113,7 @@ export function Eagle() {
       const root = document.documentElement;
       let shown = false;
       let overField = false;
+      let hasPointer = false;
 
       const show = () => {
         if (shown) return;
@@ -129,7 +130,8 @@ export function Eagle() {
           s.y = e.clientY;
           s.mx = e.clientX;
           s.my = e.clientY;
-          show();
+          hasPointer = true;
+          if (window.__aqReady) show();
         }
       };
       const over = (e: PointerEvent) => {
@@ -163,6 +165,7 @@ export function Eagle() {
         const dt = Math.min(dtms / 1000, 0.05);
         if (!dt) return;
         s.t += dt;
+        if (!shown && hasPointer && window.__aqReady) show(); // wait for the intro to finish
         // follow the pointer closely (it is a cursor: the beak must stay on the target)
         const k = 1 - Math.exp(-dt * 22);
         s.x += (s.tx - s.x) * k;

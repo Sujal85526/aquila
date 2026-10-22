@@ -1,10 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { markReady } from "@/lib/ready";
 
 const SEEN = "aquila-v2-intro";
+const CANVAS_W = 1520;
+const CANVAS_H = 1020;
+const PIVOT_X = 0.671;
+const PIVOT_Y = 0.78;
+const WING_UP = 6;
+const WING_DOWN = -62;
+const TEXT = "AQUILA · FOR THOSE WHO SEE FURTHER · AQUILA · FOR THOSE WHO SEE FURTHER · ";
+
+const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b);
 
 const pageLoaded = () =>
   new Promise<void>((resolve) => {
@@ -15,161 +24,218 @@ const pageLoaded = () =>
   });
 
 /**
- * "Lens" intro. A pair of sunglasses is drawn stroke by stroke, light sweeps across the lenses, the
- * wordmark rises and the tagline scrambles in — then both lenses open outward until they swallow the
- * screen and the site appears through them. Repeat visits in a session get a quicker version.
+ * Intro. An eagle circles the AQUILA seal — a ring of turning lettering with the wordmark inside —
+ * in a flattened orbit, passing behind it and in front of it. When the page is ready the eagle
+ * breaks away toward the corner and the ring opens outward like an iris, revealing the site.
  */
 export function Loader() {
   const root = useRef<HTMLDivElement>(null);
-  const svg = useRef<SVGSVGElement>(null);
+  const bg = useRef<SVGSVGElement>(null);
+  const seal = useRef<SVGSVGElement>(null);
+  const mark = useRef<HTMLDivElement>(null);
+  const tag = useRef<HTMLParagraphElement>(null);
+  const bird = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLImageElement>(null);
+  const wing = useRef<HTMLImageElement>(null);
 
-  // Lay the lenses out in real pixels before paint so they are centred on any screen.
   useEffect(() => {
-    const el = svg.current;
-    if (!el) return;
+    const el = root.current!;
+    const bgEl = bg.current!;
+    const sealEl = seal.current!;
+    const markEl = mark.current!;
+    const tagEl = tag.current!;
+    const birdEl = bird.current!;
+    const bodyEl = body.current!;
+    const wingEl = wing.current!;
+
+    const finish = () => {
+      document.body.style.overflow = "";
+      el.style.display = "none";
+    };
+    document.body.style.overflow = "hidden";
+    if (prefersReducedMotion()) {
+      gsap.to(el, { opacity: 0, duration: 0.4, onStart: markReady, onComplete: finish });
+      return;
+    }
+    let quick = false;
+    try {
+      quick = !!sessionStorage.getItem(SEEN);
+      sessionStorage.setItem(SEEN, "1");
+    } catch {}
+
+    /* ---------- layout in real pixels ---------- */
     const W = window.innerWidth;
     const H = window.innerHeight;
-    const r = Math.min(Math.max(W * 0.085, 54), Math.min(W * 0.2, H * 0.16, 150));
-    const gap = r * 0.42;
-    const cx1 = W / 2 - r - gap / 2;
-    const cx2 = W / 2 + r + gap / 2;
-    const cy = H / 2 - Math.min(40, H * 0.05);
-    el.setAttribute("viewBox", `0 0 ${W} ${H}`);
-    const set = (sel: string, attrs: Record<string, number | string>) =>
-      el.querySelectorAll(sel).forEach((n, i) => Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, String(typeof v === "function" ? (v as (i: number) => number)(i) : v))));
-    set("[data-lens]", { r, cy });
-    el.querySelectorAll("[data-lens]").forEach((n, i) => n.setAttribute("cx", String(i ? cx2 : cx1)));
-    el.querySelectorAll("[data-hole]").forEach((n, i) => {
-      n.setAttribute("cx", String(i ? cx2 : cx1));
-      n.setAttribute("cy", String(cy));
-    });
-    const bridge = el.querySelector("[data-bridge]")!;
-    bridge.setAttribute("d", `M ${cx1 + r} ${cy - r * 0.18} Q ${W / 2} ${cy - r * 0.46} ${cx2 - r} ${cy - r * 0.18}`);
-    const t1 = el.querySelector("[data-temple-l]")!;
-    t1.setAttribute("d", `M ${cx1 - r} ${cy - r * 0.2} L ${cx1 - r * 1.55} ${cy - r * 0.34}`);
-    const t2 = el.querySelector("[data-temple-r]")!;
-    t2.setAttribute("d", `M ${cx2 + r} ${cy - r * 0.2} L ${cx2 + r * 1.55} ${cy - r * 0.34}`);
-    el.querySelectorAll("[data-shine]").forEach((n, i) => {
-      n.setAttribute("x", String((i ? cx2 : cx1) - r * 1.6));
-      n.setAttribute("y", String(cy - r * 1.4));
-      n.setAttribute("width", String(r * 0.9));
-      n.setAttribute("height", String(r * 2.8));
-    });
-    el.querySelectorAll("[data-clip]").forEach((n, i) => {
-      n.setAttribute("cx", String(i ? cx2 : cx1));
-      n.setAttribute("cy", String(cy));
-      n.setAttribute("r", String(r));
-    });
-    el.dataset.r = String(r);
-    el.dataset.cy = String(cy);
-    el.dataset.cx1 = String(cx1);
-    el.dataset.cx2 = String(cx2);
-    // wordmark sits under the lenses
-    const mark = root.current!.querySelector<HTMLElement>("[data-wordmark]")!;
-    mark.style.top = `${cy + r + Math.max(26, r * 0.45)}px`;
-    mark.style.width = `${Math.min(Math.max(r * 3.1, 150), 360)}px`;
-  }, []);
+    const R = clamp(Math.min(W, H) * 0.2, 88, 150);
+    const cx = W / 2;
+    const cy = H / 2 - 10;
+    const reach = Math.hypot(W, H);
+    const CW = clamp(R * 1.75, 150, 250);
+    const CH = (CW * CANVAS_H) / CANVAS_W;
+    const rx = Math.min(R * 1.85, W * 0.42);
+    const ry = R * 0.5;
 
-  useGSAP(
-    () => {
-      const el = root.current!;
-      const s = svg.current!;
-      const q = gsap.utils.selector(el);
-      const finish = () => {
-        document.body.style.overflow = "";
-        el.style.display = "none";
-      };
-      document.body.style.overflow = "hidden";
-      if (prefersReducedMotion()) {
-        gsap.to(el, { opacity: 0, duration: 0.4, onStart: markReady, onComplete: finish });
-        return;
-      }
-      let quick = false;
-      try {
-        quick = !!sessionStorage.getItem(SEEN);
-        sessionStorage.setItem(SEEN, "1");
-      } catch {}
+    for (const svg of [bgEl, sealEl]) svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const q = (root: Element, sel: string) => root.querySelector(sel)!;
+    q(bgEl, "[data-hole]").setAttribute("cx", String(cx));
+    q(bgEl, "[data-hole]").setAttribute("cy", String(cy));
+    const ringEl = q(sealEl, "[data-ring]");
+    const ring2El = q(sealEl, "[data-ring2]");
+    for (const c of [ringEl, ring2El]) {
+      c.setAttribute("cx", String(cx));
+      c.setAttribute("cy", String(cy));
+    }
+    ringEl.setAttribute("r", String(R));
+    ring2El.setAttribute("r", String(R * 0.9));
+    const textR = R * 1.13;
+    q(sealEl, "[data-textpath]").setAttribute("d", `M ${cx - textR} ${cy} a ${textR} ${textR} 0 1 1 ${2 * textR} 0 a ${textR} ${textR} 0 1 1 ${-2 * textR} 0`);
+    const tp = q(sealEl, "textPath");
+    tp.setAttribute("textLength", String(2 * Math.PI * textR - 2));
+    (q(sealEl, "[data-text]") as SVGTextElement).style.fontSize = `${Math.max(9, R * 0.1)}px`;
 
-      const r = Number(s.dataset.r);
-      const W = window.innerWidth;
-      const H = window.innerHeight;
-      const reach = Math.hypot(W, H); // enough for either hole to cover the screen
-      const strokes = q("[data-stroke]");
-      gsap.set(strokes, { drawSVG: "0%" });
-      gsap.set(q("[data-wordmark] [data-mark]"), { y: 0, yPercent: 115 });
-      gsap.set(q("[data-tag]"), { autoAlpha: 0 });
-      gsap.set(q("[data-shine]"), { x: 0, autoAlpha: 0 });
+    const markW = R * 1.42;
+    markEl.style.width = `${markW}px`;
+    markEl.style.left = `${cx - markW / 2}px`;
+    markEl.style.top = `${cy - (markW * 297) / 996 / 2}px`;
+    tagEl.style.top = `${cy + R * 1.75}px`;
+    birdEl.style.width = `${CW}px`;
+    birdEl.style.height = `${CH}px`;
 
-      const intro = gsap.timeline();
-      if (quick) {
-        intro.to(strokes, { drawSVG: "100%", duration: 0.55, stagger: 0.04, ease: "power2.out" }, 0)
-          .to(q("[data-wordmark] [data-mark]"), { yPercent: 0, duration: 0.7, ease: "expo.out" }, 0.1);
-      } else {
-        intro
-          .to(q("[data-ring]"), { drawSVG: "100%", duration: 1.5, stagger: 0.12, ease: "power2.inOut" }, 0)
-          .to(q("[data-bridge]"), { drawSVG: "100%", duration: 0.7, ease: "power2.out" }, 1.0)
-          .to(q("[data-temple-l], [data-temple-r]"), { drawSVG: "100%", duration: 0.6, ease: "power2.out" }, 1.25)
-          .to(q("[data-wordmark] [data-mark]"), { yPercent: 0, duration: 1.3, ease: "expo.out" }, 1.0)
-          .to(q("[data-tag]"), { autoAlpha: 1, duration: 0.2 }, 1.3)
-          .to(q("[data-tag]"), { duration: 1.3, scrambleText: { text: "For those who see further", chars: "upperCase", speed: 0.6, revealDelay: 0.25 } }, 1.3)
-          .to(q("[data-shine]"), { autoAlpha: 1, duration: 0.01 }, 1.5)
-          .fromTo(q("[data-shine]"), { x: 0 }, { x: r * 3.4, duration: 1.1, stagger: 0.08, ease: "power2.inOut" }, 1.5)
-          .to(q("[data-shine]"), { autoAlpha: 0, duration: 0.2 }, 2.45);
-      }
-      intro.call(() => {
-        intro.pause();
-        pageLoaded().then(() => {
-          const out = gsap.timeline({ onComplete: finish });
-          out
-            .to(q("[data-tag]"), { autoAlpha: 0, duration: 0.3 }, 0)
-            .to(q("[data-wordmark] [data-mark]"), { yPercent: -115, duration: 0.6, ease: "power3.in" }, 0)
-            .to(q("[data-bridge], [data-temple-l], [data-temple-r]"), { autoAlpha: 0, duration: 0.3 }, 0.05)
-            // the lenses open: the mask holes and the lens rings grow together
-            .to(q("[data-hole]"), { attr: { r: reach }, duration: 1.45, ease: "aq" }, 0.35)
-            .to(q("[data-ring]"), { attr: { r: reach }, duration: 1.45, ease: "aq" }, 0.35)
-            .to(q("[data-ring]"), { autoAlpha: 0, duration: 0.5 }, 0.9)
-            .call(markReady, undefined, 0.75);
-        });
+    /* ---------- initial states ---------- */
+    gsap.set([ringEl, ring2El], { drawSVG: "0%" });
+    gsap.set(q(sealEl, "[data-text]"), { autoAlpha: 0 });
+    gsap.set(markEl.firstElementChild, { y: 0, yPercent: 115 });
+    gsap.set(tagEl, { autoAlpha: 0 });
+    gsap.set(birdEl, { autoAlpha: 0 });
+
+    const s = { th: 215, intro: 0, breakout: 0, flip: 1, phase: 0, energy: 0.9, boost: 0 };
+
+    /* ---------- the eagle ---------- */
+    let last = performance.now();
+    const tick = () => {
+      const now = performance.now();
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      s.th += (s.breakout > 0 ? 80 : 150 + (1 - s.intro) * 60) * dt;
+      const th = (s.th * Math.PI) / 180;
+      const sin = Math.sin(th);
+      const ox = cx + rx * Math.cos(th);
+      const oy = cy + ry * sin;
+      const e = 1 - Math.pow(1 - s.intro, 3);
+      let x = ox + (1 - e) * (-W * 0.65 - ox + cx);
+      let y = oy + (1 - e) * (-H * 0.3);
+      const b = s.breakout * s.breakout;
+      x += (W * 1.15 - x) * b;
+      y += (-H * 0.25 - y) * b;
+
+      // near side of the orbit is in front of the seal and larger, far side behind and smaller
+      const depth = 0.86 + 0.24 * sin;
+      const turn = clamp(-sin * 3.2, -1, 1);
+      s.flip += ((s.breakout > 0 ? 1 : turn) - s.flip) * (1 - Math.exp(-dt * 12));
+      const dx = -rx * sin;
+      const dy = ry * Math.cos(th);
+      const slope = (Math.atan2(dy, Math.abs(dx) + 1) * 180) / Math.PI;
+      const pitch = (s.breakout > 0 ? -26 * s.breakout : clamp(slope * 0.5, -22, 22)) * (s.flip >= 0 ? 1 : -1);
+      birdEl.style.zIndex = sin > 0 ? "4" : "1";
+
+      const down = 0.5 - 0.5 * Math.sin(s.phase);
+      s.phase += Math.PI * 2 * (2.5 + s.breakout * 1.5) * dt;
+      wingEl.style.transform = `rotate(${(WING_UP + (WING_DOWN - WING_UP) * (0.85 + 0.15 * s.breakout) * down).toFixed(2)}deg)`;
+      bodyEl.style.transform = `translateY(${(1.4 - 3.4 * down).toFixed(2)}%)`;
+      birdEl.style.transform = `translate3d(${(x - PIVOT_X * CW).toFixed(1)}px, ${(y - PIVOT_Y * CH).toFixed(1)}px, 0) rotate(${pitch.toFixed(2)}deg) scaleX(${s.flip.toFixed(3)}) scale(${(depth * (1 + 0.9 * s.breakout)).toFixed(3)})`;
+    };
+    gsap.ticker.add(tick);
+
+    /* ---------- timeline ---------- */
+    const t0 = performance.now();
+    const minHold = quick ? 1400 : 3600;
+    const intro = gsap.timeline();
+    intro
+      .to(ringEl, { drawSVG: "100%", duration: quick ? 0.6 : 1.3, ease: "power2.inOut" }, 0)
+      .to(ring2El, { drawSVG: "100%", duration: quick ? 0.6 : 1.5, ease: "power2.inOut" }, 0.15)
+      .to(q(sealEl, "[data-text]"), { autoAlpha: 1, duration: 0.8 }, quick ? 0.2 : 0.7)
+      .to(markEl.firstElementChild, { yPercent: 0, duration: quick ? 0.7 : 1.3, ease: "expo.out" }, quick ? 0.2 : 0.8)
+      .to(birdEl, { autoAlpha: 1, duration: 0.3 }, quick ? 0 : 0.3)
+      .to(s, { intro: 1, duration: quick ? 0.9 : 1.8, ease: "power2.out" }, quick ? 0 : 0.3)
+      .to(tagEl, { autoAlpha: 1, duration: 0.2 }, quick ? 0.4 : 1.4)
+      .to(tagEl, { duration: 1.2, scrambleText: { text: "For those who see further", chars: "upperCase", speed: 0.6, revealDelay: 0.2 } }, quick ? 0.4 : 1.4);
+    const spin = gsap.to(q(sealEl, "[data-spin]"), { rotation: 360, svgOrigin: `${cx} ${cy}`, duration: 26, ease: "none", repeat: -1 });
+
+    pageLoaded().then(() => {
+      const wait = Math.max(0, minHold - (performance.now() - t0));
+      gsap.delayedCall(wait / 1000, () => {
+        spin.timeScale(0.2);
+        gsap
+          .timeline({
+            onComplete: () => {
+              gsap.ticker.remove(tick);
+              spin.kill();
+              finish();
+            },
+          })
+          .to(tagEl, { autoAlpha: 0, duration: 0.3 }, 0)
+          .to(markEl.firstElementChild, { yPercent: -115, duration: 0.55, ease: "power3.in" }, 0)
+          .to(q(sealEl, "[data-text]"), { autoAlpha: 0, duration: 0.5 }, 0.1)
+          .to(ring2El, { autoAlpha: 0, duration: 0.3 }, 0.1)
+          // the eagle breaks away…
+          .to(s, { breakout: 1, duration: 1.7, ease: "power2.in" }, 0.15)
+          // …and the ring opens like an iris
+          .to(q(bgEl, "[data-hole]"), { attr: { r: R * 0.97 }, duration: 0.5, ease: "power2.inOut" }, 0.45)
+          .call(markReady, undefined, 0.8)
+          .to(q(bgEl, "[data-hole]"), { attr: { r: reach }, duration: 1.3, ease: "aq" }, 0.95)
+          .to(ringEl, { attr: { r: reach }, duration: 1.3, ease: "aq" }, 0.95)
+          .to(ringEl, { autoAlpha: 0, duration: 0.4 }, 1.7)
+          .to(birdEl, { autoAlpha: 0, duration: 0.35 }, 1.75);
       });
-    },
-    { scope: root },
-  );
+    });
+
+    return () => {
+      gsap.ticker.remove(tick);
+      spin.kill();
+    };
+  }, []);
 
   return (
     <div ref={root} className="aq-loader fixed inset-0 z-[100]" role="status" aria-label="Loading AQUILA">
-      <svg ref={svg} aria-hidden className="absolute inset-0 h-full w-full" viewBox="0 0 1000 700" preserveAspectRatio="none">
+      {/* espresso screen with a hole that the ring opens */}
+      <svg ref={bg} aria-hidden className="absolute inset-0 z-0 h-full w-full" viewBox="0 0 1000 700" preserveAspectRatio="none">
         <defs>
-          <mask id="aq-lens-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+          <mask id="aq-iris-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
             <rect x="0" y="0" width="100%" height="100%" fill="#fff" />
-            <circle data-hole cx="400" cy="300" r="0" fill="#000" />
-            <circle data-hole cx="600" cy="300" r="0" fill="#000" />
+            <circle data-hole cx="500" cy="350" r="0" fill="#000" />
           </mask>
-          <clipPath id="aq-clip-l"><circle data-clip cx="400" cy="300" r="60" /></clipPath>
-          <clipPath id="aq-clip-r"><circle data-clip cx="600" cy="300" r="60" /></clipPath>
-          <linearGradient id="aq-shine" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#faf0d7" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#faf0d7" stopOpacity="0.5" />
-            <stop offset="1" stopColor="#faf0d7" stopOpacity="0" />
-          </linearGradient>
         </defs>
-        <rect x="0" y="0" width="100%" height="100%" fill="#453d38" mask="url(#aq-lens-mask)" />
-        <g fill="none" stroke="#faf0d7" strokeWidth="2" strokeLinecap="round">
-          <circle data-stroke data-ring data-lens cx="400" cy="300" r="60" />
-          <circle data-stroke data-ring data-lens cx="600" cy="300" r="60" />
-          <path data-stroke data-bridge d="M0 0" />
-          <path data-stroke data-temple-l d="M0 0" />
-          <path data-stroke data-temple-r d="M0 0" />
-        </g>
-        <g clipPath="url(#aq-clip-l)"><rect data-shine x="0" y="0" width="10" height="10" fill="url(#aq-shine)" transform="skewX(-14)" /></g>
-        <g clipPath="url(#aq-clip-r)"><rect data-shine x="0" y="0" width="10" height="10" fill="url(#aq-shine)" transform="skewX(-14)" /></g>
+        <rect x="0" y="0" width="100%" height="100%" fill="#453d38" mask="url(#aq-iris-mask)" />
       </svg>
 
-      <div data-wordmark className="absolute left-1/2 -translate-x-1/2 overflow-hidden text-ivory" style={{ top: "62%", width: 220 }}>
-        <span data-mark className="aq-logo block w-full" />
+      {/* the seal: ring + turning lettering */}
+      <svg ref={seal} aria-hidden className="absolute inset-0 z-[2] h-full w-full" viewBox="0 0 1000 700" preserveAspectRatio="none">
+        <defs>
+          <path data-textpath id="aq-seal-path" d="M0 0" />
+        </defs>
+        <g fill="none" stroke="#faf0d7" strokeLinecap="round">
+          <circle data-ring cx="500" cy="350" r="100" strokeWidth="1.6" />
+          <circle data-ring2 cx="500" cy="350" r="90" strokeWidth="0.8" strokeOpacity="0.45" />
+        </g>
+        <g data-spin>
+          <text data-text fill="#d8c7b5" style={{ letterSpacing: "0.32em", fontFamily: "var(--font-jost), system-ui" }}>
+            <textPath href="#aq-seal-path" startOffset="0" lengthAdjust="spacing">{TEXT}</textPath>
+          </text>
+        </g>
+      </svg>
+
+      <div ref={mark} className="absolute z-[3] overflow-hidden text-ivory" style={{ width: 160 }}>
+        <span className="aq-logo block w-full" />
       </div>
-      <p data-tag className="absolute inset-x-0 bottom-[9%] text-center text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]">
-        For those who see further
-      </p>
+      <p ref={tag} className="absolute inset-x-0 z-[3] text-center text-[10px] uppercase tracking-[0.5em] text-sand opacity-0 md:text-[11px]" />
+
+      {/* the eagle */}
+      <div ref={bird} aria-hidden className="pointer-events-none absolute left-0 top-0 opacity-0 will-change-transform" style={{ zIndex: 1, transformOrigin: `${PIVOT_X * 100}% ${PIVOT_Y * 100}%` }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={body} src="/eagle/body.webp" alt="" width={CANVAS_W} height={CANVAS_H} decoding="async" draggable={false} className="absolute inset-0 h-full w-full select-none" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={wing} src="/eagle/wing.webp" alt="" width={CANVAS_W} height={CANVAS_H} decoding="async" draggable={false} className="absolute inset-0 h-full w-full select-none" style={{ transformOrigin: `${PIVOT_X * 100}% ${PIVOT_Y * 100}%` }} />
+      </div>
     </div>
   );
 }
