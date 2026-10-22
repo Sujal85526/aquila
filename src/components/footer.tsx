@@ -9,7 +9,7 @@ export function Footer() {
   return (
     <footer className="relative isolate overflow-hidden bg-cocoa text-ivory">
       <Image
-        src="/deck/footer.jpg"
+        src="/deck/footer-c.jpg"
         alt=""
         fill
         sizes="100vw"

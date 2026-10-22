@@ -17,14 +17,14 @@ const PANELS = [
     title: ["Inspired by a land", "that sees beyond."],
     cta: "Discover Aquila",
     href: "/our-story",
-    src: "/deck/story-1.jpg",
+    src: "/deck/story-1c.jpg",
   },
   {
     eyebrow: "More than sunglasses.",
     title: ["A mindset."],
     cta: "Our values",
     href: "/our-story#values",
-    src: "/deck/story-2.jpg",
+    src: "/deck/story-2c.jpg",
   },
 ];
 
