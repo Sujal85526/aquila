@@ -14,7 +14,7 @@ const SHOW_PHOTOS = true;
 // pos / posMd: where the photo sits in the frame on phones / laptops (keeps faces clear of the text).
 // top: true puts the text block in the upper middle on phones (over the dark rock), else it sits low.
 const PANELS = [
-  { eyebrow: "Our story", title: ["Inspired by a land", "that sees beyond"], cta: "Discover Aquila", href: "/our-story", src: "/deck/story-man.jpg", pos: "50% 14%", posMd: "50% 30%", top: true, ratio: "aspect-[1/1.15]", shift: "md:left-[17%] md:[mask-image:linear-gradient(to_right,transparent,#000_26%)]", cursor: "Discover" },
+  { eyebrow: "Our story", title: ["Inspired by a land", "that sees beyond"], cta: "Discover Aquila", href: "/our-story", src: "/deck/story-man.jpg", pos: "50% 6%", posMd: "50% 30%", top: true, ratio: "aspect-[1/1.15]", shift: "md:left-[17%] md:[mask-image:linear-gradient(to_right,transparent,#000_26%)]", cursor: "Discover" },
   { eyebrow: "More than sunglasses.", title: ["A mindset"], cta: "Our values", href: "/our-story#values", src: "/deck/story-glasses.jpg", pos: "50% 52%", posMd: "50% 58%", top: false, ratio: "aspect-square", shift: "", cursor: "Values" },
 ];
 
@@ -76,17 +76,17 @@ export function StoryPanels() {
               {SHOW_PHOTOS && <Image src={p.src} alt="" fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover object-(--pos) md:object-(--pos-md)" style={{ "--pos": p.pos, "--pos-md": p.posMd } as React.CSSProperties} />}
             </div>
           </div>
-          {SHOW_PHOTOS && <div className={`absolute inset-0 -z-10 ${p.top ? "bg-gradient-to-r from-ink/45 via-ink/5 to-transparent" : "bg-gradient-to-t from-ink/55 via-ink/10 to-transparent"} md:bg-gradient-to-r md:from-ink/65 md:via-ink/10 md:to-transparent`} />}
-          <div className={`w-full px-6 md:self-end md:px-[4.8vw] md:pb-[2.6vw] md:pt-0 ${p.top ? "self-start pt-[34%]" : "pb-[18%]"}`}>
-            <p data-rise className="eyebrow text-[8px] tracking-[0.26em] text-ivory/90 md:text-[clamp(9px,0.8vw,13px)]">{p.eyebrow}</p>
-            <h2 data-title className="display mt-2 text-[19px] md:mt-[0.5vw] md:text-[clamp(22px,2.75vw,48px)]">
+          {SHOW_PHOTOS && <div className={`absolute inset-0 -z-10 ${p.top ? "bg-gradient-to-r from-ink/45 via-ink/5 to-transparent" : "bg-gradient-to-t from-ink/85 via-ink/40 to-transparent"} ${p.top ? "md:bg-gradient-to-r md:from-ink/65 md:via-ink/10 md:to-transparent" : ""}`} />}
+          <div className={`w-full px-6 md:self-end md:px-[4.8vw] md:pb-[2.6vw] md:pt-0 ${p.top ? "self-start pt-[25%]" : "pb-[12%]"}`}>
+            <p data-rise className="eyebrow text-[clamp(7px,2.1vw,8.5px)] tracking-[0.26em] text-ivory [text-shadow:0_1px_10px_rgba(0,0,0,0.6)] md:text-[clamp(9px,0.8vw,13px)]">{p.eyebrow}</p>
+            <h2 data-title className="display mt-[1.6vw] text-[clamp(16px,5vw,20px)] [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:mt-[0.5vw] md:text-[clamp(22px,2.75vw,48px)]">
               {p.title.map((t) => (
                 <span key={t} className="block">{t}</span>
               ))}
             </h2>
-            <div data-rise className="mt-4 md:mt-[1.4vw]">
+            <div data-rise className="mt-[3.4vw] md:mt-[1.4vw]">
               <Magnetic>
-                <Link href={p.href} data-cursor={p.cursor} className="btn-outline !px-3.5 !py-[7px] !text-[8px] md:!px-5 md:!py-[11px] md:!text-[9.5px]">
+                <Link href={p.href} data-cursor={p.cursor} className="btn-outline !px-[3.4vw] !py-[1.8vw] !text-[clamp(7px,2.1vw,8.5px)] [text-shadow:0_1px_8px_rgba(0,0,0,0.5)] md:!px-5 md:!py-[11px] md:!text-[9.5px]">
                   <span>{p.cta}</span>
                   <ArrowRight size={12} strokeWidth={1.2} />
                 </Link>
