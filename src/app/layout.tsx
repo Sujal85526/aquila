@@ -6,7 +6,9 @@ import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
 import { Loader } from "@/components/loader";
 import { SmoothScroll } from "@/components/smooth-scroll";
-import { Eagle } from "@/components/eagle";
+// Eagle (pointer-eagle on laptops, scroll-eagle on phones) is switched off for now.
+// To bring it back: uncomment this import and the commented Eagle line in the JSX below. Component: src/components/eagle.tsx
+// import { Eagle } from "@/components/eagle";
 import { PageFrame } from "@/components/page-frame";
 import { PageTransition } from "@/components/page-transition";
 
@@ -51,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <noscript><style>{".aq-loader{display:none!important}"}</style></noscript>
         <SmoothScroll>
           <PageTransition />
-          <Eagle />
+          {/* <Eagle /> */}
           <Header />
           <PageFrame footer={<Footer />}>
             <main>{children}</main>
