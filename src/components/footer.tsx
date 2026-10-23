@@ -48,7 +48,7 @@ export function Footer() {
           <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-ivory/15 pt-8 md:mt-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-x-12 md:pt-9">
             <div className="col-span-2 md:col-span-1">
               <Logo className="w-[104px] md:w-[124px]" />
-              <p className="mt-5 max-w-[26ch] font-[family-name:var(--font-light-serif)] text-[19px] italic leading-snug text-sand md:text-[22px]">
+              <p className="mt-5 max-w-[26ch] font-[family-name:var(--font-instrument)] text-[19px] font-medium leading-snug tracking-[-0.035em] text-sand md:text-[22px]">
                 For those who see further.
               </p>
             </div>
@@ -92,7 +92,6 @@ export function Footer() {
         <div className="relative border-t border-ivory/15">
           <div className="mx-auto flex max-w-[1480px] items-center justify-between gap-4 px-6 py-5 text-[10px] uppercase tracking-[0.22em] text-sand/80 md:px-12">
             <p>© Aquila · Abu Dhabi</p>
-            <p>UAE | AED</p>
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
 import { AccountIcon, BagIcon, InstagramIcon, SearchIcon } from "./icons";
 import { Logo } from "./logo";
 import { useCart } from "@/lib/cart";
@@ -111,9 +111,6 @@ export function Header() {
           </Link>
 
           <div className="flex items-center justify-end gap-4 md:gap-6">
-            <span className="eyebrow hidden items-center gap-1.5 lg:flex">
-              UAE | AED <ChevronDown size={11} strokeWidth={1.4} />
-            </span>
             <button aria-label="Search" onClick={() => setSearch(true)} className="p-1">
               <SearchIcon size={23} />
             </button>

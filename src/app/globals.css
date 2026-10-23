@@ -18,6 +18,11 @@
 :root {
   --header-h: 72px;
 }
+@media (max-width: 767px) {
+  :root {
+    --header-h: 60px;
+  }
+}
 
 html {
   scrollbar-gutter: stable;

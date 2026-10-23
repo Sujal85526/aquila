@@ -9,12 +9,11 @@ import { whenReady } from "@/lib/ready";
 import { Magnetic } from "../motion";
 
 // Copy follows the brand-deck homepage mockup.
-// The photos are switched off (plain panels) until suitable pictures are found.
-// To bring them back: set SHOW_PHOTOS to true. Images are the `src` of each panel below.
-const SHOW_PHOTOS = false;
+// Set SHOW_PHOTOS to false for plain flat panels (no pictures).
+const SHOW_PHOTOS = true;
 const PANELS = [
-  { eyebrow: "Our story", title: ["Inspired by a land", "that sees beyond."], cta: "Discover Aquila", href: "/our-story", src: "/deck/story-1c.jpg", cursor: "Discover" },
-  { eyebrow: "More than sunglasses.", title: ["A mindset."], cta: "Our values", href: "/our-story#values", src: "/deck/story-2c.jpg", cursor: "Values" },
+  { eyebrow: "Our story", title: ["Inspired by a land", "that sees beyond"], cta: "Discover Aquila", href: "/our-story", src: "/deck/story-man.jpg", pos: "50% 55%", cursor: "Discover" },
+  { eyebrow: "More than sunglasses.", title: ["A mindset"], cta: "Our values", href: "/our-story#values", src: "/deck/story-glasses.jpg", pos: "50% 55%", cursor: "Values" },
 ];
 
 export function StoryPanels() {
@@ -72,13 +71,13 @@ export function StoryPanels() {
           <span data-cover aria-hidden className="absolute inset-0 z-30 origin-bottom bg-paper" />
           <div data-parallax className="absolute -inset-y-[4%] inset-x-0 -z-20">
             <div data-img className="absolute inset-0 transition-transform duration-[1800ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.04]">
-              {SHOW_PHOTOS && <Image src={p.src} alt="" fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover" />}
+              {SHOW_PHOTOS && <Image src={p.src} alt="" fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover" style={{ objectPosition: p.pos }} />}
             </div>
           </div>
-          {SHOW_PHOTOS && <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent md:bg-gradient-to-r md:from-ink/45 md:via-transparent" />}
+          {SHOW_PHOTOS && <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent md:bg-gradient-to-r md:from-ink/65 md:via-ink/10 md:to-transparent" />}
           <div className="w-full px-8 pb-10 md:px-[4.8vw] md:pb-[2.6vw]">
             <p data-rise className="eyebrow text-[10px] tracking-[0.26em] text-ivory/90 md:text-[clamp(9px,0.8vw,13px)]">{p.eyebrow}</p>
-            <h2 data-title className="display mt-3 text-[clamp(28px,8vw,40px)] md:mt-[0.5vw] md:text-[clamp(22px,2.75vw,48px)]">
+            <h2 data-title className="display mt-3 text-[clamp(24px,6.6vw,34px)] md:mt-[0.5vw] md:text-[clamp(22px,2.75vw,48px)]">
               {p.title.map((t) => (
                 <span key={t} className="block">{t}</span>
               ))}
