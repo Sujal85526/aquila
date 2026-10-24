@@ -43,7 +43,7 @@ export const aed = (n: number) => `AED ${n.toLocaleString("en-AE")}`;
 
 export const SHIPPING = {
   standard: { id: "standard", label: "UAE Wide Delivery", eta: "2–4 business days", price: 20 },
-  express: { id: "express", label: "Express Delivery", eta: "1–2 business days", price: 40 },
+  express: { id: "express", label: "Express Delivery", eta: "1–3 business days", price: 40 },
 } as const;
 
 export const EMIRATES = [
