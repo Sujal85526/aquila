@@ -16,9 +16,9 @@ export default function OurStory() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/85 via-ink/30 to-ink/30" />
         <div className="mx-auto w-full max-w-[1480px] px-6 pb-16 md:px-12 md:pb-24">
           <p className="eyebrow text-ivory/80"><Scramble text="OUR STORY" delay={0.4} /></p>
-          <SplitHeading as="h1" delay={0.2} className="display mt-4 text-[clamp(34px,6.2vw,92px)]">
-            <span className="block">Inspired by a land</span>
-            <span className="block">that sees beyond.</span>
+          <SplitHeading as="h1" delay={0.2} className="display mt-4 text-[calc((100vw-48px)/12.8)] md:text-[clamp(34px,6.2vw,92px)]">
+            <span className="block whitespace-nowrap">Inspired by a land</span>
+            <span className="block whitespace-nowrap">that sees beyond.</span>
           </SplitHeading>
         </div>
       </section>
