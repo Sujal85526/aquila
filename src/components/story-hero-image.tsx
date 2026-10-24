@@ -26,7 +26,7 @@ export function StoryHeroImage() {
   return (
     <div data-drift className="absolute inset-0 -z-20">
       <div ref={root} className="absolute inset-0 will-change-transform">
-        <Image src="/photos/DSC00446.jpg" alt="" fill priority sizes="100vw" quality={90} className="object-cover object-[50%_35%]" />
+        <Image src="/photos/story-hero.jpg" alt="" fill priority sizes="100vw" quality={90} className="object-cover object-[50%_32%] md:object-[50%_36%]" />
       </div>
     </div>
   );

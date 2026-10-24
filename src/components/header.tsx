@@ -130,19 +130,7 @@ export function Header() {
       </header>
 
       {menu && (
-        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-start bg-espresso px-8 pt-[calc(var(--header-h)+48px)] text-ivory md:hidden grain">
-          <video
-            data-m
-            className="-mx-8 mb-8 aspect-[2.3/1] w-[calc(100%+4rem)] max-w-none bg-cocoa object-cover object-[50%_37%]"
-            src="/video/menu-teaser.mp4"
-            poster="/video/menu-teaser-poster.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-hidden
-          />
+        <div ref={menuRef} data-lenis-prevent className="fixed inset-0 z-40 flex flex-col justify-start bg-espresso px-8 pt-[calc(var(--header-h)+40px)] text-ivory md:hidden grain">
           <nav className="flex flex-col gap-5">
             {NAV.map((n) => (
               <Link key={n.href} data-m href={n.href} className="font-[family-name:var(--font-instrument)] text-[28px] font-medium uppercase leading-none tracking-[-0.035em]">
