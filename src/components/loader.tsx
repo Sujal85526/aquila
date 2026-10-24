@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { usePathname } from "next/navigation";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { markReady } from "@/lib/ready";
 
@@ -18,9 +19,17 @@ const pageLoaded = () =>
  */
 export function Loader() {
   const root = useRef<HTMLDivElement>(null);
+  // The intro plays only when the visit starts on the home page. Any other page that is opened
+  // directly (a shared link, a refresh on /shop, ...) skips it and just opens.
+  const pathname = usePathname();
+  const startedOnHome = useRef(pathname === "/");
 
   useGSAP(
     () => {
+      if (!startedOnHome.current) {
+        markReady();
+        return;
+      }
       const el = root.current!;
       const q = gsap.utils.selector(el);
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -56,6 +65,8 @@ export function Loader() {
     },
     { scope: root },
   );
+
+  if (!startedOnHome.current) return null;
 
   return (
     <div ref={root} className="aq-loader fixed inset-0 z-[100] text-ivory" role="status" aria-label="Loading AQUILA">

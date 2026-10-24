@@ -15,7 +15,7 @@ const SHOW_PHOTOS = true;
 // top: true puts the text block in the upper middle on phones (over the dark rock), else it sits low.
 const PANELS = [
   { eyebrow: "Our story", title: ["Inspired by a land", "that sees beyond"], cta: "Discover Aquila", href: "/our-story", src: "/deck/story-land.jpg", pos: "50% 30%", posMd: "50% 40%", top: true, ratio: "aspect-[1/1.15]", shift: "", cursor: "Discover" },
-  { eyebrow: "More than sunglasses.", title: ["A mindset"], cta: "Our values", href: "/our-story#values", src: "/deck/story-glasses-v2.jpg", pos: "50% 52%", posMd: "50% 58%", top: false, ratio: "aspect-square", shift: "", cursor: "Values" },
+  { eyebrow: "More than sunglasses.", title: ["A mindset"], cta: "Our values", href: "/our-story#values", src: "/deck/story-glasses-v3.jpg", pos: "50% 50%", posMd: "50% 50%", top: false, ratio: "aspect-[5/4]", shift: "", cursor: "Values" },
 ];
 
 export function StoryPanels() {
