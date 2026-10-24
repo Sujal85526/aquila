@@ -79,15 +79,15 @@ export function StoryPanels() {
           </div>
           {SHOW_PHOTOS && <div className={`absolute inset-0 -z-10 ${p.top ? "bg-gradient-to-r from-ink/45 via-ink/5 to-transparent md:from-ink/80 md:via-ink/30" : "bg-gradient-to-t from-ink/80 via-ink/25 to-transparent"}`} />}
           <div className={`w-full px-6 md:self-end md:px-[4.8vw] md:pb-[2.6vw] md:pt-0 ${p.top ? "self-start pt-[25%]" : "pb-[9%] md:pb-[2.6vw]"}`}>
-            <p data-rise className="eyebrow text-[clamp(7px,2.1vw,8.5px)] tracking-[0.26em] text-ivory [text-shadow:0_1px_10px_rgba(0,0,0,0.6)] md:text-[clamp(9px,0.8vw,13px)]">{p.eyebrow}</p>
-            <h2 data-title className="display mt-[1.6vw] text-[clamp(16px,5vw,20px)] [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:mt-[0.5vw] md:text-[clamp(22px,2.75vw,48px)]">
+            <p data-rise className="eyebrow text-[clamp(7px,2.1vw,8.5px)] tracking-[0.26em] text-ivory md:text-[clamp(9px,0.8vw,13px)]">{p.eyebrow}</p>
+            <h2 data-title className="display mt-[1.6vw] text-[clamp(16px,5vw,20px)] md:mt-[0.5vw] md:text-[clamp(22px,2.75vw,48px)]">
               {p.title.map((t) => (
                 <span key={t} className="block">{t}</span>
               ))}
             </h2>
             <div data-rise className="mt-[3.4vw] md:mt-[1.4vw]">
               <Magnetic>
-                <Link href={p.href} data-cursor={p.cursor} className="btn-outline !px-[3.4vw] !py-[1.8vw] !text-[clamp(7px,2.1vw,8.5px)] [text-shadow:0_1px_8px_rgba(0,0,0,0.5)] md:!px-5 md:!py-[11px] md:!text-[9.5px]">
+                <Link href={p.href} data-cursor={p.cursor} className="btn-outline !px-[3.4vw] !py-[1.8vw] !text-[clamp(7px,2.1vw,8.5px)] md:!px-5 md:!py-[11px] md:!text-[9.5px]">
                   <span>{p.cta}</span>
                   <ArrowRight size={12} strokeWidth={1.2} />
                 </Link>
