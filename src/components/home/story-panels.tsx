@@ -15,7 +15,7 @@ const SHOW_PHOTOS = true;
 // top: true puts the text block in the upper middle on phones (over the dark rock), else it sits low.
 const PANELS = [
   { eyebrow: "Our story", title: ["Inspired by a land", "that sees beyond"], cta: "Discover Aquila", href: "/our-story", src: "/deck/story-land.jpg", pos: "50% 30%", posMd: "50% 40%", top: true, ratio: "aspect-[1/1.15]", shift: "", cursor: "Discover" },
-  { eyebrow: "More than sunglasses.", title: ["A mindset"], cta: "Our values", href: "/our-story#values", src: "/deck/story-glasses-v3.jpg", pos: "50% 50%", posMd: "50% 50%", top: false, ratio: "max-md:pt-[80vw]", shift: "max-md:!inset-y-0 max-md:!bottom-auto max-md:h-[calc(80vw+2px)]", cursor: "Values" },
+  { eyebrow: "More than sunglasses.", title: ["A mindset"], cta: "Our values", href: "/our-story#values", src: "/deck/story-glasses-v3.jpg", pos: "50% 50%", posMd: "50% 50%", top: false, ratio: "aspect-[9/8]", shift: "", srcTall: "/deck/story-glasses-tall.jpg", cursor: "Values" },
 ];
 
 export function StoryPanels() {
@@ -73,11 +73,12 @@ export function StoryPanels() {
           <span data-cover aria-hidden className="absolute inset-0 z-30 origin-bottom bg-paper" />
           <div data-parallax className={`absolute -inset-y-[4%] inset-x-0 -z-20 ${p.shift}`}>
             <div data-img className="absolute inset-0 transition-transform duration-[1800ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.04]">
-              {SHOW_PHOTOS && <Image src={p.src} alt="" fill sizes="(min-width:768px) 50vw, 100vw" className="object-cover object-(--pos) md:object-(--pos-md)" style={{ "--pos": p.pos, "--pos-md": p.posMd } as React.CSSProperties} />}
+              {SHOW_PHOTOS && <Image src={p.src} alt="" fill sizes="(min-width:768px) 50vw, 100vw" className={`object-cover object-(--pos) md:object-(--pos-md) ${p.srcTall ? "max-md:hidden" : ""}`} style={{ "--pos": p.pos, "--pos-md": p.posMd } as React.CSSProperties} />}
+              {SHOW_PHOTOS && p.srcTall && <Image src={p.srcTall} alt="" fill sizes="100vw" className="object-cover md:hidden" />}
             </div>
           </div>
-          {SHOW_PHOTOS && <div className={`absolute inset-0 -z-10 ${p.top ? "bg-gradient-to-r from-ink/45 via-ink/5 to-transparent md:from-ink/80 md:via-ink/30" : "max-md:inset-x-0 max-md:bottom-auto max-md:h-[calc(80vw+2px)] bg-gradient-to-t from-ink/85 via-ink/40 to-transparent max-md:from-cocoa max-md:via-transparent max-md:shadow-[inset_0_-6px_0_0_var(--color-cocoa)]"}`} />}
-          <div className={`w-full px-6 md:self-end md:px-[4.8vw] md:pb-[2.6vw] md:pt-0 ${p.top ? "self-start pt-[25%]" : "pb-[10%] pt-[6vw] md:pb-[2.6vw]"}`}>
+          {SHOW_PHOTOS && <div className={`absolute inset-0 -z-10 ${p.top ? "bg-gradient-to-r from-ink/45 via-ink/5 to-transparent md:from-ink/80 md:via-ink/30" : "bg-gradient-to-t from-ink/80 via-ink/25 to-transparent"}`} />}
+          <div className={`w-full px-6 md:self-end md:px-[4.8vw] md:pb-[2.6vw] md:pt-0 ${p.top ? "self-start pt-[25%]" : "pb-[9%] md:pb-[2.6vw]"}`}>
             <p data-rise className="eyebrow text-[clamp(7px,2.1vw,8.5px)] tracking-[0.26em] text-ivory [text-shadow:0_1px_10px_rgba(0,0,0,0.6)] md:text-[clamp(9px,0.8vw,13px)]">{p.eyebrow}</p>
             <h2 data-title className="display mt-[1.6vw] text-[clamp(16px,5vw,20px)] [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:mt-[0.5vw] md:text-[clamp(22px,2.75vw,48px)]">
               {p.title.map((t) => (
