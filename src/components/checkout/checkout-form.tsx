@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Check, ChevronDown, CreditCard, HandCoins, Minus, Plus, Trash2, Truck } from "lucide-react";
+import { Check, ChevronDown, CreditCard, Minus, Plus, Trash2, Truck } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "@/lib/cart";
 import { EMIRATES, SHIPPING, aed, bySlug } from "@/lib/products";
@@ -133,6 +133,8 @@ export function CheckoutForm() {
                 <span className="font-medium"> Pay</span>
               </span>
             </label>
+            {/* Cash on Delivery is switched off for now. To bring it back: uncomment this option and
+                re-add HandCoins to the lucide-react import above. (The fee logic below still works.)
             <label className={`flex cursor-pointer items-center gap-4 border px-5 py-4 ${pay === "cod" ? "border-ink bg-white/40" : "border-espresso/30"}`}>
               <input type="radio" name="pay" className="sr-only" checked={pay === "cod"} onChange={() => setPay("cod")} />
               <Radio on={pay === "cod"} />
@@ -140,6 +142,7 @@ export function CheckoutForm() {
               <span className="flex-1 text-[13px]">Cash on Delivery</span>
               <span className="text-[12px] tracking-[0.12em]">{aed(COD_FEE)}</span>
             </label>
+            */}
           </div>
 
           <p className="mt-6 border border-dashed border-taupe/60 bg-sand/20 p-4 text-[12px] leading-relaxed text-ink/70 sm:ml-[52px]">
