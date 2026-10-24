@@ -8,7 +8,7 @@ import { Scramble, onceVisible } from "../motion";
 
 const ITEMS = [
   { icon: <ShieldCheck size={36} strokeWidth={0.9} className="shrink-0" />, title: "Premium quality", sub: "Crafted to last" },
-  { icon: <Truck size={36} strokeWidth={0.9} className="shrink-0" />, title: "UAE wide delivery", sub: "Fast & reliable" },
+  { icon: <Truck size={36} strokeWidth={0.9} className="shrink-0" />, title: "UAE wide delivery", sub: "Express delivery in 1–3 business days" },
 ];
 
 /** Icons draw themselves in stroke by stroke, the divider lines grow, and the labels scramble into place. */

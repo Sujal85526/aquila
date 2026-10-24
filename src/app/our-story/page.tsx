@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ClipReveal, Reveal, ScrubText, Scramble, SplitHeading } from "@/components/motion";
+import { Reveal, ScrubText, Scramble, SplitHeading } from "@/components/motion";
 import { StoryHeroImage } from "@/components/story-hero-image";
 
 export const metadata: Metadata = { title: "Our Story" };
@@ -54,9 +53,6 @@ export default function OurStory() {
               </div>
             ))}
           </Reveal>
-          <ClipReveal cover="bg-espresso" className="mt-16 aspect-[4/3] md:aspect-[16/7]">
-            <Image src="/photos/packaging-ref.jpg" alt="Aquila packaging: deep espresso box, bag and microfibre pouch" fill sizes="(min-width:1480px) 1380px, 100vw" className="object-cover object-[50%_45%]" />
-          </ClipReveal>
         </div>
       </section>
 

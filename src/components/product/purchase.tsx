@@ -98,7 +98,7 @@ export function Purchase({ product }: { product: Product }) {
       <div data-in className="mt-7 grid grid-cols-3 gap-3">
         {[
           { icon: ShieldCheck, t: "Premium quality", s: "Crafted to last" },
-          { icon: Truck, t: "UAE wide delivery", s: "Fast & reliable" },
+          { icon: Truck, t: "UAE wide delivery", s: "Express delivery in 1–3 business days" },
           { icon: Box, t: "Secure payment", s: "Safe & encrypted" },
         ].map(({ icon: Icon, t, s }) => (
           <div key={t} className="flex items-start gap-2.5">
