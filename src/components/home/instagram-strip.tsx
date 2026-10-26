@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 import { Magnetic, Reveal, SplitHeading } from "../motion";
 
 const FEED: { src: string; href: string; pos: string; video?: string }[] = [
-  { src: "/instagram/post-1.jpg", href: "https://www.instagram.com/p/DVJbVolko84/", pos: "50% 60%" },
+  { src: "/instagram/post-1.jpg", href: "https://www.instagram.com/p/DVJbVolko84/", pos: "50% 50%" },
   { src: "/instagram/post-2.jpg", href: "https://www.instagram.com/p/DVdPdMNEjDl/", pos: "50% 50%" },
   { src: "/instagram/reel-3.jpg", video: "/instagram/reel-3.mp4", href: "https://www.instagram.com/reel/DVENcHjkg51/", pos: "50% 45%" },
   { src: "/instagram/post-4.jpg", href: "https://www.instagram.com/p/DVEITfHEsHL/", pos: "50% 50%" },
@@ -38,7 +38,7 @@ function Carousel() {
 
     const layout = () => {
       const w = stageEl.clientWidth < 640 ? 190 : stageEl.clientWidth < 1100 ? 250 : 320;
-      const h = Math.round(w * 1.22);
+      const h = Math.round(w * 1.28);
       spacing = w * (stageEl.clientWidth < 640 ? 0.52 : 0.58);
       stageEl.style.height = `${h + 70}px`;
       stageEl.style.setProperty("--w", `${w}px`);

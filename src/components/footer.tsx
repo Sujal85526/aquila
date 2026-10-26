@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Mail } from "lucide-react";
 import { InstagramIcon } from "./icons";
-import { Logo } from "./logo";
 import { CONTACT } from "@/lib/products";
 import { Reveal, SplitHeading } from "./motion";
 
@@ -45,13 +44,7 @@ export function Footer() {
             </a>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-ivory/15 pt-8 md:mt-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-x-12 md:pt-9">
-            <div className="col-span-2 md:col-span-1">
-              <Logo className="w-[104px] md:w-[124px]" />
-              <p className="mt-5 max-w-[26ch] font-[family-name:var(--font-instrument)] text-[19px] font-medium leading-snug tracking-[-0.035em] text-sand md:text-[22px]">
-                For those who see further.
-              </p>
-            </div>
+          <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-ivory/15 pt-8 md:mt-10 md:grid-cols-3 md:gap-x-12 md:pt-9">
             <nav aria-label="Explore">
               <span className={col}>Explore</span>
               <ul className="space-y-2.5">
