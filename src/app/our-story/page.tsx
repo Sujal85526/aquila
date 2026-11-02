@@ -6,7 +6,7 @@ import { StoryHeroImage } from "@/components/story-hero-image";
 
 export const metadata: Metadata = { title: "Our Story" };
 
-const CHARACTER = ["Elevated", "Minimal", "Confident", "Timeless", "Rooted in the UAE"];
+const CHARACTER = ["Elevated", "Minimal", "Confident", "Timeless"];
 
 export default function OurStory() {
   return (
