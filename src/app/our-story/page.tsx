@@ -42,11 +42,11 @@ export default function OurStory() {
         </div>
       </section>
 
-      <section id="values" className="px-6 pb-16 pt-4 text-ivory md:px-12 md:pb-24">
+      <section id="values" className="bg-espresso px-6 py-16 text-ivory md:px-12 md:py-20">
         <Mindset />
       </section>
 
-      <section className="bg-paper px-6 pb-20 pt-4 text-center md:pb-28 md:pt-8">
+      <section className="bg-paper px-6 py-20 text-center md:py-28">
         <SplitHeading className="display text-[clamp(30px,4.5vw,60px)]">
           <span className="block">For those who</span>
           <span className="block">see further.</span>
