@@ -54,7 +54,7 @@ export function CheckoutForm() {
       <div className="grid min-h-[70vh] place-items-center bg-paper px-6 pt-[var(--header-h)] text-center">
         <div>
           <h1 className="display text-4xl">Your bag is empty</h1>
-          <Link href="/shop" className="btn-outline mt-8 text-espresso"><span>Shop the collection</span></Link>
+          <Link href="/shop" className="btn-outline mt-8"><span>Shop the collection</span></Link>
         </div>
       </div>
     );
@@ -79,7 +79,7 @@ export function CheckoutForm() {
             <input required name="email" type="email" autoComplete="email" placeholder="Email address" className="field" />
             <label className="flex items-center gap-3 text-[13px]">
               <input type="checkbox" name="news" defaultChecked className="peer sr-only" />
-              <span className="grid h-[18px] w-[18px] place-items-center border border-ink bg-ink text-ivory peer-focus-visible:ring-2 peer-focus-visible:ring-ink/40 [input:not(:checked)~&]:bg-transparent [input:not(:checked)~&>svg]:hidden"><Check size={12} strokeWidth={2} /></span>
+              <span className="grid h-[18px] w-[18px] place-items-center border border-ivory bg-ivory text-espresso peer-focus-visible:ring-2 peer-focus-visible:ring-ink/40 [input:not(:checked)~&]:bg-transparent [input:not(:checked)~&>svg]:hidden"><Check size={12} strokeWidth={2} /></span>
               Email me with news, offers and updates.
             </label>
           </div>
@@ -100,14 +100,14 @@ export function CheckoutForm() {
             </div>
             <div className="flex sm:col-span-2">
               <input required name="phone" type="tel" autoComplete="tel-national" inputMode="tel" placeholder="Phone number" className="field flex-1 border-r-0" />
-              <span className="flex items-center gap-2 border border-espresso/30 px-5 text-[13px]">+971 <ChevronDown size={13} /></span>
+              <span className="flex items-center gap-2 border border-ivory/25 px-5 text-[13px]">+971 <ChevronDown size={13} /></span>
             </div>
           </div>
 
           <Step n={3}>Shipping method</Step>
           <div className="space-y-2.5 sm:pl-[52px]" role="radiogroup" aria-label="Shipping method">
             {Object.values(SHIPPING).map((s) => (
-              <label key={s.id} className={`flex cursor-pointer items-center gap-4 border px-5 py-4 transition-colors ${ship === s.id ? "border-ink bg-white/40" : "border-espresso/30 hover:border-ink/60"}`}>
+              <label key={s.id} className={`flex cursor-pointer items-center gap-4 border px-5 py-4 transition-colors ${ship === s.id ? "border-ivory bg-ivory/10" : "border-ivory/25 hover:border-ink/60"}`}>
                 <input type="radio" name="ship" className="peer sr-only" checked={ship === s.id} onChange={() => setShip(s.id)} />
                 <Radio on={ship === s.id} />
                 <Truck size={30} strokeWidth={0.9} className="shrink-0" />
@@ -122,20 +122,20 @@ export function CheckoutForm() {
 
           <Step n={4}>Payment method</Step>
           <div className="space-y-2.5 sm:pl-[52px]" role="radiogroup" aria-label="Payment method">
-            <label className={`flex cursor-pointer items-center gap-4 border px-5 py-4 ${pay === "card" ? "border-ink bg-white/40" : "border-espresso/30"}`}>
+            <label className={`flex cursor-pointer items-center gap-4 border px-5 py-4 ${pay === "card" ? "border-ivory bg-ivory/10" : "border-ivory/25"}`}>
               <input type="radio" name="pay" className="sr-only" checked={pay === "card"} onChange={() => setPay("card")} />
               <Radio on={pay === "card"} />
               <CreditCard size={30} strokeWidth={0.9} className="shrink-0" />
               <span className="flex-1 text-[13px]">Credit / Debit Card</span>
               <span className="flex items-center gap-2.5 text-[13px]">
-                <b className="font-semibold italic text-[#1a3d8f]">VISA</b>
-                <span className="relative inline-block h-[18px] w-[28px]"><i className="absolute left-0 h-[18px] w-[18px] rounded-full bg-[#eb001b]" /><i className="absolute right-0 h-[18px] w-[18px] rounded-full bg-[#f79e1b] mix-blend-multiply" /></span>
+                <b className="font-semibold italic text-ivory">VISA</b>
+                <span className="relative inline-block h-[18px] w-[28px]"><i className="absolute left-0 h-[18px] w-[18px] rounded-full bg-[#eb001b]" /><i className="absolute right-0 h-[18px] w-[18px] rounded-full bg-[#f79e1b] " /></span>
                 <span className="font-medium"> Pay</span>
               </span>
             </label>
             {/* Cash on Delivery is switched off for now. To bring it back: uncomment this option and
                 re-add HandCoins to the lucide-react import above. (The fee logic below still works.)
-            <label className={`flex cursor-pointer items-center gap-4 border px-5 py-4 ${pay === "cod" ? "border-ink bg-white/40" : "border-espresso/30"}`}>
+            <label className={`flex cursor-pointer items-center gap-4 border px-5 py-4 ${pay === "cod" ? "border-ivory bg-ivory/10" : "border-ivory/25"}`}>
               <input type="radio" name="pay" className="sr-only" checked={pay === "cod"} onChange={() => setPay("cod")} />
               <Radio on={pay === "cod"} />
               <HandCoins size={30} strokeWidth={0.9} className="shrink-0" />
@@ -155,7 +155,7 @@ export function CheckoutForm() {
         </div>
       </form>
 
-      <aside className="bg-gradient-to-b from-[#f3e8d6] to-[#ecdfca] px-6 py-12 md:px-12 lg:pt-14">
+      <aside className="bg-gradient-to-b from-[#3a332f] to-[#332c28] px-6 py-12 md:px-12 lg:pt-14">
         <div className="mx-auto max-w-[480px] lg:sticky lg:top-[calc(var(--header-h)+40px)]">
           <div className="flex items-baseline justify-between">
             <h2 className="eyebrow text-[13px] tracking-[0.3em]">Order summary ({items.reduce((n, i) => n + i.qty, 0)})</h2>
@@ -191,7 +191,7 @@ export function CheckoutForm() {
                 applyDiscount(null);
                 setCodeMsg("This code isn’t valid.");
               }}
-              className="bg-espresso px-9 text-[11px] uppercase tracking-[0.3em] text-ivory transition hover:bg-ink"
+              className="bg-ivory px-9 text-[11px] uppercase tracking-[0.3em] text-espresso transition hover:bg-sand"
             >
               Apply
             </button>
@@ -217,7 +217,7 @@ export function CheckoutForm() {
 function Radio({ on }: { on: boolean }) {
   return (
     <span aria-hidden className={`grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border ${on ? "border-ink" : "border-taupe"}`}>
-      {on && <span className="h-2.5 w-2.5 rounded-full bg-ink" />}
+      {on && <span className="h-2.5 w-2.5 rounded-full bg-ivory" />}
     </span>
   );
 }

@@ -13,7 +13,7 @@ export default function OurStory() {
     <>
       <section className="relative isolate flex min-h-[92svh] items-end overflow-hidden bg-cocoa text-ivory">
         <StoryHeroImage />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/85 via-ink/30 to-ink/30" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-cocoa/85 via-cocoa/30 to-cocoa/30" />
         <div className="mx-auto w-full max-w-[1480px] px-6 pb-16 md:px-12 md:pb-24">
           <p className="eyebrow text-ivory/80"><Scramble text="OUR STORY" delay={0.4} /></p>
           <SplitHeading as="h1" delay={0.2} className="display mt-4 text-[calc((100vw-48px)/12.8)] md:text-[clamp(34px,6.2vw,92px)]">
@@ -66,7 +66,7 @@ export default function OurStory() {
           <span className="block">see further.</span>
         </SplitHeading>
         <Reveal delay={0.3}>
-          <Link href="/shop" data-cursor="Shop" className="btn-outline mt-10 text-espresso"><span>Shop the collection</span><ArrowRight size={13} strokeWidth={1.2} /></Link>
+          <Link href="/shop" data-cursor="Shop" className="btn-outline mt-10"><span>Shop the collection</span><ArrowRight size={13} strokeWidth={1.2} /></Link>
         </Reveal>
       </section>
     </>

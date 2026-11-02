@@ -10,7 +10,7 @@ export default function Account() {
         <p className="eyebrow text-taupe">Account</p>
         <h1 className="display mt-4 text-[clamp(34px,5vw,56px)]">Coming soon.</h1>
         <p className="mt-5 text-[13px] leading-[1.9] text-ink/70">Customer accounts are on the way. You can check out as a guest in the meantime.</p>
-        <Link href="/shop" className="btn-outline mt-8 text-espresso"><span>Shop the collection</span></Link>
+        <Link href="/shop" className="btn-outline mt-8"><span>Shop the collection</span></Link>
       </div>
     </div>
   );
