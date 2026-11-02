@@ -6,6 +6,8 @@ import { StoryHeroImage } from "@/components/story-hero-image";
 
 export const metadata: Metadata = { title: "Our Story" };
 
+const CHARACTER = ["Elevated", "Minimal", "Confident", "Timeless", "Rooted in the UAE"];
+
 export default function OurStory() {
   return (
     <>
@@ -38,6 +40,21 @@ export default function OurStory() {
               Designed for those who appreciate individuality, effortless style, and the beauty of simplicity.
             </ScrubText>
           </div>
+        </div>
+      </section>
+
+      <section id="values" className="px-6 py-16 text-center text-ivory md:px-12 md:py-20">
+        <div className="mx-auto max-w-[1180px] border-y border-ivory/15 py-12 md:py-14">
+          <p className="eyebrow text-sand"><Scramble text="MORE THAN SUNGLASSES" /></p>
+          <SplitHeading className="display mt-3 text-[clamp(28px,3.4vw,44px)]">A mindset.</SplitHeading>
+          <Reveal stagger={0.1} as="ul" className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:mt-10 lg:flex-nowrap lg:gap-x-7">
+            {CHARACTER.map((c, i) => (
+              <li key={c} className="flex items-center gap-6 lg:gap-7">
+                {i > 0 && <span aria-hidden className="hidden h-1 w-1 rounded-full bg-sand/60 lg:block" />}
+                <span className="font-serif text-[15px] uppercase tracking-[0.2em] text-ivory/90 lg:text-[17px]">{c}</span>
+              </li>
+            ))}
+          </Reveal>
         </div>
       </section>
 
