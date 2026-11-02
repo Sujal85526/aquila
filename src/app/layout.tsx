@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   openGraph: { title: "AQUILA", description: "For those who see further.", type: "website" },
 };
 
-export const viewport: Viewport = { themeColor: "#4a2c1f" };
+export const viewport: Viewport = { themeColor: "#453d38" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
