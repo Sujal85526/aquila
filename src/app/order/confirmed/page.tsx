@@ -15,7 +15,7 @@ export default function Confirmed() {
         <p className="mt-5 text-[13px] leading-[1.9] text-ink/70">
           We’ll email you with your order details. For anything else, write to us at aquila.ae1@gmail.com.
         </p>
-        <Link href="/shop" className="btn-outline mt-9 text-espresso"><span>Continue shopping</span></Link>
+        <Link href="/shop" className="btn-outline mt-9"><span>Continue shopping</span></Link>
       </div>
     </div>
   );
