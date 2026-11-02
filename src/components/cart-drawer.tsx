@@ -40,7 +40,7 @@ export function CartDrawer() {
 
   return (
     <div className={open ? "" : "pointer-events-none"} aria-hidden={!open}>
-      <div ref={veil} onClick={() => setOpen(false)} className="fixed inset-0 z-[70] bg-black/50 opacity-0" />
+      <div ref={veil} onClick={() => setOpen(false)} className="fixed inset-0 z-[70] bg-ink/50 opacity-0" />
       <aside
         ref={panel}
         data-lenis-prevent
@@ -58,7 +58,7 @@ export function CartDrawer() {
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 px-8 text-center">
             <p className="font-serif text-3xl uppercase">Your bag is empty</p>
-            <Link href="/shop" onClick={() => setOpen(false)} className="btn-outline">
+            <Link href="/shop" onClick={() => setOpen(false)} className="btn-outline text-espresso">
               <span>Shop the collection</span>
             </Link>
           </div>

@@ -85,8 +85,8 @@ export function Hero() {
       <div data-film className="absolute inset-0 will-change-transform">
         <video ref={video} className="h-full w-full object-cover object-[50%_35%]" src="/video/hero-v2.mp4" poster="/video/hero-v2-poster.jpg" muted loop playsInline preload="auto" />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-r from-cocoa/45 via-cocoa/10 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-cocoa/75 via-transparent to-cocoa/20 md:from-cocoa/60 md:to-cocoa/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-ink/45 via-ink/10 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/20 md:from-ink/60 md:to-ink/10" />
 
       <div className="relative z-10 flex h-full items-end px-6 pb-[9vh] md:px-0 md:pb-[10vh] md:pl-[4.5vw]">
         <div className="max-w-[900px] text-[#f2e6c6] [text-rendering:geometricPrecision]">
@@ -106,7 +106,7 @@ export function Hero() {
           </div>
         </div>
       </div>
-      <div data-shade aria-hidden className="pointer-events-none absolute inset-0 z-[15] bg-cocoa opacity-0" />
+      <div data-shade aria-hidden className="pointer-events-none absolute inset-0 z-[15] bg-ink opacity-0" />
 
       <div data-ui className="absolute bottom-7 right-7 z-20 hidden items-center gap-3 md:bottom-[1.6vw] md:right-[4vw] md:flex">
         <span className="text-[10px] uppercase tracking-[0.34em]">Scroll</span>

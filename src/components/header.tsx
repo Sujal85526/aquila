@@ -78,7 +78,7 @@ export function Header() {
       ? "bg-gradient-to-b from-black/45 to-transparent"
       : dark || scrolled || menu
         ? "bg-espresso"
-        : "bg-paper border-b border-ivory/15";
+        : "bg-paper border-b border-ink/70";
 
   return (
     <>
@@ -120,7 +120,7 @@ export function Header() {
             <button aria-label="Open bag" onClick={() => setOpen(true)} className="relative p-1">
               <BagIcon size={23} />
               {mounted && count > 0 && (
-                <span ref={badgeRef} className={`absolute -bottom-0.5 -right-1.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-normal ${tone === "text-ink" ? "bg-ivory text-espresso" : "bg-ivory text-espresso"}`}>
+                <span ref={badgeRef} className={`absolute -bottom-0.5 -right-1.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-normal ${tone === "text-ink" ? "bg-ink text-ivory" : "bg-ivory text-espresso"}`}>
                   {count}
                 </span>
               )}
