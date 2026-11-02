@@ -43,17 +43,18 @@ export default function OurStory() {
         </div>
       </section>
 
-      <section id="values" className="bg-espresso px-6 py-24 text-ivory md:px-12 md:py-32">
-        <div className="mx-auto max-w-[1480px]">
-          <p className="eyebrow text-sand"><Scramble text="MORE THAN SUNGLASSES" /></p>
-          <SplitHeading className="display mt-4 text-[clamp(36px,5.5vw,76px)]">A mindset.</SplitHeading>
-          <Reveal stagger={0.1} className="mt-14 grid gap-px bg-ivory/15 sm:grid-cols-2 lg:grid-cols-5">
+      <section id="values" className="bg-espresso px-6 py-24 text-ivory md:px-12 md:py-36">
+        <div className="mx-auto grid max-w-[1180px] gap-14 md:grid-cols-[1fr_1.5fr] md:gap-24">
+          <div className="md:sticky md:top-32 md:self-start">
+            <p className="eyebrow text-sand"><Scramble text="MORE THAN SUNGLASSES" /></p>
+            <SplitHeading className="display mt-4 text-[clamp(36px,5vw,68px)]">A mindset.</SplitHeading>
+          </div>
+          <Reveal stagger={0.12} as="ul" className="border-t border-ivory/20">
             {CHARACTER.map((c, i) => (
-              <div key={c} className="group relative overflow-hidden bg-espresso py-10 pr-6 lg:py-14">
-                <span aria-hidden className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-ivory transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-x-100" />
-                <span className="text-[11px] tracking-[0.3em] text-sand">0{i + 1}</span>
-                <p className="mt-4 font-serif text-[26px] uppercase tracking-wide transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-3">{c}</p>
-              </div>
+              <li key={c} className="group flex items-baseline gap-6 border-b border-ivory/20 py-6 transition-colors duration-500 hover:border-ivory/60 md:gap-10 md:py-8">
+                <span className="w-7 text-[11px] tracking-[0.3em] text-sand/70 transition-colors duration-500 group-hover:text-sand">0{i + 1}</span>
+                <span className="font-serif text-[clamp(26px,3.6vw,46px)] uppercase leading-none tracking-wide text-ivory/90 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-3 group-hover:text-ivory">{c}</span>
+              </li>
             ))}
           </Reveal>
         </div>
