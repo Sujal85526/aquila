@@ -24,7 +24,6 @@ function shotsFor(p: Product): { shots: Shot[]; details: string[] } {
         { src: "/deck/dune-detail-a.webp", thumb: "/deck/dune-thumb-1.webp", alt: "The Dune temple, side view" },
         { src: "/deck/dune-detail-b.webp", thumb: "/deck/dune-thumb-2.webp", alt: "AQUILA temple detail" },
         { src: "/deck/dune-thumb-3.webp", thumb: "/deck/dune-thumb-3.webp", alt: "Wearing The Dune" },
-        { src: "/deck/dune-thumb-4.webp", thumb: "/deck/dune-thumb-4.webp", alt: "Aquila packaging" },
       ],
       details: ["/deck/dune-detail-a.webp", "/deck/dune-detail-b.webp"],
     };
@@ -35,7 +34,6 @@ function shotsFor(p: Product): { shots: Shot[]; details: string[] } {
       { src: "/photos/DSC00436.jpg", thumb: "/photos/DSC00436.jpg", alt: "AQUILA temple detail" },
       { src: "/photos/DSC00712.jpg", thumb: "/photos/DSC00712.jpg", alt: "Profile wearing Aquila" },
       { src: "/photos/DSC00403.jpg", thumb: "/photos/DSC00403.jpg", alt: "Portrait wearing Aquila" },
-      { src: "/photos/packaging-ref.jpg", thumb: "/photos/packaging-ref.jpg", alt: "Aquila packaging" },
     ],
     details: ["/photos/DSC00436.jpg", "/photos/DSC00712.jpg"],
   };

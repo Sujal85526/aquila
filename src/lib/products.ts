@@ -32,7 +32,6 @@ export const products: Product[] = [
 export const TBC = "Details will be confirmed before launch.";
 export const ACCORDIONS = [
   { id: "details", label: "Product details" },
-  { id: "materials", label: "Materials" },
   { id: "size", label: "Size & fit" },
   { id: "care", label: "Care guide" },
 ];

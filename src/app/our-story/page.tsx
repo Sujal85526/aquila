@@ -6,7 +6,7 @@ import { StoryHeroImage } from "@/components/story-hero-image";
 
 export const metadata: Metadata = { title: "Our Story" };
 
-const CHARACTER = ["Elevated", "Minimal", "Confident", "Timeless", "Rooted in place"];
+const CHARACTER = ["Elevated", "Minimal", "Confident", "Timeless", "Rooted in the UAE"];
 
 export default function OurStory() {
   return (
@@ -34,7 +34,10 @@ export default function OurStory() {
               Aquila takes its name from the Latin word for eagle — a symbol of vision, perspective and seeing beyond the ordinary.
             </ScrubText>
             <ScrubText className="text-[15px] leading-[2] tracking-[0.03em] text-ink">
-              A UAE-born sunglasses brand with a refined, understated point of view. A statement of vision, individuality, and the confidence to see beyond the ordinary.
+              A UAE-born sunglasses brand with a refined, understated point of view.
+            </ScrubText>
+            <ScrubText className="text-[15px] leading-[2] tracking-[0.03em] text-ink">
+              Designed for those who appreciate individuality, effortless style, and the beauty of simplicity.
             </ScrubText>
           </div>
         </div>
