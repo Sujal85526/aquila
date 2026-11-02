@@ -72,8 +72,7 @@ export function Hero() {
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap
           .timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: document.documentElement, start: 0, end: () => el.offsetHeight, scrub: true, invalidateOnRefresh: true } })
-          .to("[data-shade]", { opacity: 0.7 }, 0)
-          .to("[data-ui]", { opacity: 0 }, 0);
+          .to("[data-shade]", { opacity: 0.7 }, 0);
       });
       return () => mm.revert();
     },
@@ -107,13 +106,6 @@ export function Hero() {
         </div>
       </div>
       <div data-shade aria-hidden className="pointer-events-none absolute inset-0 z-[15] bg-cocoa opacity-0" />
-
-      <div data-ui className="absolute bottom-7 right-7 z-20 hidden items-center gap-3 md:bottom-[1.6vw] md:right-[4vw] md:flex">
-        <span className="text-[10px] uppercase tracking-[0.34em]">Scroll</span>
-        <span className="relative block h-10 w-px overflow-hidden bg-ivory/30">
-          <span className="aq-cue absolute inset-x-0 top-0 h-1/2 bg-ivory" />
-        </span>
-      </div>
     </section>
   );
 }
