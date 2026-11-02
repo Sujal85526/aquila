@@ -41,8 +41,8 @@ export const bySlug = (slug: string) => products.find((p) => p.slug === slug);
 export const aed = (n: number) => `AED ${n.toLocaleString("en-AE")}`;
 
 export const SHIPPING = {
-  standard: { id: "standard", label: "UAE Wide Delivery", eta: "2–4 business days", price: 20 },
-  express: { id: "express", label: "Express Delivery", eta: "1–3 business days", price: 40 },
+  // One delivery option. The former "Express Delivery" (AED 40) option was removed.
+  standard: { id: "standard", label: "UAE Wide Delivery", eta: "Express delivery in 1–3 business days", price: 20 },
 } as const;
 
 export const EMIRATES = [

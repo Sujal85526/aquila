@@ -17,7 +17,6 @@ export default function Shipping() {
             </li>
           ))}
         </ul>
-        <p className="text-[13px] text-taupe">Delivery timings are estimates and will be confirmed before launch.</p>
       </div>
     </PageShell>
   );
