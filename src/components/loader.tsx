@@ -19,17 +19,29 @@ const pageLoaded = () =>
  */
 export function Loader() {
   const root = useRef<HTMLDivElement>(null);
-  // The intro plays only when the visit starts on the home page. Any other page that is opened
-  // directly (a shared link, a refresh on /shop, ...) skips it and just opens.
+  // The intro plays only once per visit, and only when that visit starts on the home page. Any other
+  // page opened directly (a shared link, a refresh on /shop, ...) skips it, and so does coming back
+  // to the home page later in the same visit (the flag lives in sessionStorage).
   const pathname = usePathname();
   const startedOnHome = useRef(pathname === "/");
 
   useGSAP(
     () => {
-      if (!startedOnHome.current) {
+      const seen = (() => {
+        try {
+          return sessionStorage.getItem("aq-intro") === "1";
+        } catch {
+          return false;
+        }
+      })();
+      if (!startedOnHome.current || seen) {
+        if (root.current) root.current.style.display = "none";
         markReady();
         return;
       }
+      try {
+        sessionStorage.setItem("aq-intro", "1");
+      } catch {}
       const el = root.current!;
       const q = gsap.utils.selector(el);
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

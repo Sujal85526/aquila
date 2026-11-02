@@ -10,7 +10,9 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 // To bring it back: uncomment this import and the commented Eagle line in the JSX below. Component: src/components/eagle.tsx
 // import { Eagle } from "@/components/eagle";
 import { PageFrame } from "@/components/page-frame";
-import { PageTransition } from "@/components/page-transition";
+// The page-to-page curtain (dark screen with the AQUILA logo + page name) is switched off, so the
+// only intro is the first-visit loader. To bring it back: uncomment this import and the JSX line.
+// import { PageTransition } from "@/components/page-transition";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -52,7 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Loader />
         <noscript><style>{".aq-loader{display:none!important}"}</style></noscript>
         <SmoothScroll>
-          <PageTransition />
+          {/* <PageTransition /> */}
           {/* <Eagle /> */}
           <Header />
           <PageFrame footer={<Footer />}>
