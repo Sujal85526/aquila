@@ -155,7 +155,7 @@ export function CheckoutForm() {
         </div>
       </form>
 
-      <aside className="bg-gradient-to-b from-[#3a332f] to-[#332c28] px-6 py-12 md:px-12 lg:pt-14">
+      <aside className="bg-gradient-to-b from-[#412618] to-[#38201a] px-6 py-12 md:px-12 lg:pt-14">
         <div className="mx-auto max-w-[480px] lg:sticky lg:top-[calc(var(--header-h)+40px)]">
           <div className="flex items-baseline justify-between">
             <h2 className="eyebrow text-[13px] tracking-[0.3em]">Order summary ({items.reduce((n, i) => n + i.qty, 0)})</h2>
