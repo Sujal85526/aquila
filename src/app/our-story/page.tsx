@@ -43,17 +43,15 @@ export default function OurStory() {
         </div>
       </section>
 
-      <section id="values" className="bg-espresso px-6 py-24 text-ivory md:px-12 md:py-36">
-        <div className="mx-auto grid max-w-[1180px] gap-14 md:grid-cols-[1fr_1.5fr] md:gap-24">
-          <div className="md:sticky md:top-32 md:self-start">
-            <p className="eyebrow text-sand"><Scramble text="MORE THAN SUNGLASSES" /></p>
-            <SplitHeading className="display mt-4 text-[clamp(36px,5vw,68px)]">A mindset.</SplitHeading>
-          </div>
-          <Reveal stagger={0.12} as="ul" className="border-t border-ivory/20">
+      <section id="values" className="px-6 py-16 text-center text-ivory md:px-12 md:py-20">
+        <div className="mx-auto max-w-[1180px] border-y border-ivory/15 py-12 md:py-14">
+          <p className="eyebrow text-sand"><Scramble text="MORE THAN SUNGLASSES" /></p>
+          <SplitHeading className="display mt-3 text-[clamp(28px,3.4vw,44px)]">A mindset.</SplitHeading>
+          <Reveal stagger={0.1} as="ul" className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:mt-10 lg:flex-nowrap lg:gap-x-7">
             {CHARACTER.map((c, i) => (
-              <li key={c} className="group flex items-baseline gap-6 border-b border-ivory/20 py-6 transition-colors duration-500 hover:border-ivory/60 md:gap-10 md:py-8">
-                <span className="w-7 text-[11px] tracking-[0.3em] text-sand/70 transition-colors duration-500 group-hover:text-sand">0{i + 1}</span>
-                <span className="font-serif text-[clamp(26px,3.6vw,46px)] uppercase leading-none tracking-wide text-ivory/90 transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-3 group-hover:text-ivory">{c}</span>
+              <li key={c} className="flex items-center gap-6 lg:gap-7">
+                {i > 0 && <span aria-hidden className="hidden h-1 w-1 rounded-full bg-sand/60 lg:block" />}
+                <span className="font-serif text-[15px] uppercase tracking-[0.2em] text-ivory/90 lg:text-[17px]">{c}</span>
               </li>
             ))}
           </Reveal>
