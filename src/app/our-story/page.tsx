@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal, ScrubText, Scramble, SplitHeading } from "@/components/motion";
+import { Mindset } from "@/components/mindset";
 import { StoryHeroImage } from "@/components/story-hero-image";
 
 export const metadata: Metadata = { title: "Our Story" };
-
-const CHARACTER = ["Elevated", "Minimal", "Confident", "Timeless"];
 
 export default function OurStory() {
   return (
@@ -23,7 +22,7 @@ export default function OurStory() {
         </div>
       </section>
 
-      <section className="bg-paper px-6 py-24 md:px-12 md:py-40">
+      <section className="bg-paper px-6 pb-12 pt-16 md:px-12 md:pb-16 md:pt-24">
         <div className="mx-auto grid max-w-[1180px] gap-10 md:grid-cols-[1fr_1.4fr] md:gap-24">
           <div>
             <p className="eyebrow text-taupe"><Scramble text="THE IDEA" /></p>
@@ -34,31 +33,20 @@ export default function OurStory() {
               Aquila takes its name from the Latin word for eagle — a symbol of vision, perspective and seeing beyond the ordinary.
             </ScrubText>
             <ScrubText className="text-[15px] leading-[2] tracking-[0.03em] text-ink">
-              A UAE-born sunglasses brand with a refined, understated point of view.
+              Rooted in the heart of the UAE, Aquila is a premium eyewear brand offering limited collections defined by understated elegance and timeless design.
             </ScrubText>
             <ScrubText className="text-[15px] leading-[2] tracking-[0.03em] text-ink">
-              Designed for those who appreciate individuality, effortless style, and the beauty of simplicity.
+              Created for those who appreciate details.
             </ScrubText>
           </div>
         </div>
       </section>
 
-      <section id="values" className="px-6 py-16 text-center text-ivory md:px-12 md:py-20">
-        <div className="mx-auto max-w-[1180px] border-y border-ivory/15 py-12 md:py-14">
-          <p className="eyebrow text-sand"><Scramble text="MORE THAN SUNGLASSES" /></p>
-          <SplitHeading className="display mt-3 text-[clamp(28px,3.4vw,44px)]">A mindset.</SplitHeading>
-          <Reveal stagger={0.1} as="ul" className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:mt-10 lg:flex-nowrap lg:gap-x-7">
-            {CHARACTER.map((c, i) => (
-              <li key={c} className="flex items-center gap-6 lg:gap-7">
-                {i > 0 && <span aria-hidden className="hidden h-1 w-1 rounded-full bg-sand/60 lg:block" />}
-                <span className="font-serif text-[15px] uppercase tracking-[0.2em] text-ivory/90 lg:text-[17px]">{c}</span>
-              </li>
-            ))}
-          </Reveal>
-        </div>
+      <section id="values" className="px-6 pb-16 pt-4 text-ivory md:px-12 md:pb-24">
+        <Mindset />
       </section>
 
-      <section className="bg-paper px-6 py-24 text-center md:py-32">
+      <section className="bg-paper px-6 pb-20 pt-4 text-center md:pb-28 md:pt-8">
         <SplitHeading className="display text-[clamp(30px,4.5vw,60px)]">
           <span className="block">For those who</span>
           <span className="block">see further.</span>
